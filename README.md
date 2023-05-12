@@ -23,6 +23,7 @@ python main.py
 ## Contributors
 Write here the name and UAB mail of the group members:
 1568073@uab.cat
+</br>1525973@uab.cat
 
 
 Xarxes Neuronals i Aprenentatge Profund
