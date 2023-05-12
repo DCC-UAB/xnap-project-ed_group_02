@@ -24,7 +24,7 @@ python main.py
 Write here the name and UAB mail of the group members:
 </br>1568073@uab.cat
 </br>1525973@uab.cat
-</br>1605189
+</br>1605189@uab.cat
 
 Xarxes Neuronals i Aprenentatge Profund
 Grau de Enginyeria de Dades, 
