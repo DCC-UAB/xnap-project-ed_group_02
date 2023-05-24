@@ -40,14 +40,14 @@ class LSTM(nn.Module):
         # setup output layer
         self.linear = nn.Linear(self.hidden_dim, output_dim)
 
-    def forward(self, input, hidden=None):
+    def forward(self, input, state, c):
         # lstm step => then ONLY take the sequence's final timetep to pass into the linear/dense layer
         # Note: lstm_out contains outputs for every step of the sequence we are looping over (for BPTT)
         # but we just need the output of the last step of the sequence, aka lstm_out[-1]
-        lstm_out, hidden = self.lstm(input, hidden)
+        lstm_out, (state,c) = self.lstm(input, (state,c))
         logits = self.linear(lstm_out[-1])              # equivalent to return_sequences=False from Keras
         genre_scores = F.log_softmax(logits, dim=1)
-        return genre_scores, hidden
+        return genre_scores, state,c
 
     def get_accuracy(self, logits, target):
         """ compute accuracy for training round """
@@ -135,7 +135,7 @@ def main():
         state, c = model.init_hidden(batch_size) # Start with a new state in each batch 
         state = state.to(device) 
         c = c.to(device)
-        hidden_state=(state,c)
+        
         
         for i in range(num_batches):
             
@@ -161,15 +161,13 @@ def main():
             X_local_minibatch.to(device)
             y_local_minibatch.to(device)
 
-            y_pred, hidden_state = model(X_local_minibatch, hidden_state)  # forward pass
-
+            y_pred, state,c = model(X_local_minibatch, state,c)  # forward pass
+            
             # Stateful = False for training. Do we go Stateful = True during inference/prediction time?
-            if not stateful:
-                hidden_state = None
-            else:
-                h_0, c_0 = hidden_state
-                h_0.detach_(), c_0.detach_()
-                hidden_state = (h_0, c_0)
+
+            state.detach_()
+            c.detach_()
+            
 
             loss = loss_function(y_pred, y_local_minibatch)  # compute loss
             loss.backward()  # backward pass
@@ -194,7 +192,7 @@ def main():
                 state, c = model.init_hidden(batch_size)
                 state = state.to(device) 
                 c = c.to(device)
-                hidden_state=(state,c)
+
                 
                 for i in range(num_dev_batches):
                     X_local_validation_minibatch, y_local_validation_minibatch = (
@@ -207,9 +205,7 @@ def main():
                     X_local_minibatch.to(device)
                     y_local_minibatch.to(device)
 
-                    y_pred, hidden_state = model(X_local_minibatch, hidden_state)
-                    if not stateful:
-                        hidden_state = None
+                    y_pred, state,c = model(X_local_minibatch, state,c)
 
                     val_loss = loss_function(y_pred, y_local_minibatch)
 
