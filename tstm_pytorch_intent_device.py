@@ -58,7 +58,7 @@ class LSTM(nn.Module):
         return accuracy.item()
     
     def init_hidden(self, batch_size):
-        return nn.Parameter(torch.zeros(self.n_layers, batch_size, self.hidden_dim)), nn.Parameter(torch.zeros(self.n_layers, batch_size, self.hidden_dim))
+        return nn.Parameter(torch.zeros(self.num_layers, batch_size, self.hidden_dim)), nn.Parameter(torch.zeros(self.num_layers, batch_size, self.hidden_dim))
         
 
 def main():
@@ -138,7 +138,7 @@ def main():
         hidden_state=(state,c)
         
         for i in range(num_batches):
-
+            
             # zero out gradient, so they don't accumulate btw batches
             model.zero_grad()
 
@@ -157,6 +157,9 @@ def main():
 
             # NLLLoss does not expect a one-hot encoded vector as the target, but class indices
             y_local_minibatch = torch.max(y_local_minibatch, 1)[1]
+            
+            X_local_minibatch.to(device)
+            y_local_minibatch.to(device)
 
             y_pred, hidden_state = model(X_local_minibatch, hidden_state)  # forward pass
 
