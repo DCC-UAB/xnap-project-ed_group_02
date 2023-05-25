@@ -158,9 +158,9 @@ def main():
             # NLLLoss does not expect a one-hot encoded vector as the target, but class indices
             y_local_minibatch = torch.max(y_local_minibatch, 1)[1]
             
-            X_local_minibatch.to(device)
-            y_local_minibatch.to(device)
-
+            X_local_minibatch=X_local_minibatch.to(device)
+            y_local_minibatch=y_local_minibatch.to(device)
+            
             y_pred, state,c = model(X_local_minibatch, state,c)  # forward pass
             
             # Stateful = False for training. Do we go Stateful = True during inference/prediction time?
@@ -202,8 +202,8 @@ def main():
                     X_local_minibatch = X_local_validation_minibatch.permute(1, 0, 2)
                     y_local_minibatch = torch.max(y_local_validation_minibatch, 1)[1]
                     
-                    X_local_minibatch.to(device)
-                    y_local_minibatch.to(device)
+                    X_local_minibatch=X_local_minibatch.to(device)
+                    y_local_minibatch=y_local_minibatch.to(device)
 
                     y_pred, state,c = model(X_local_minibatch, state,c)
 
