@@ -15,6 +15,9 @@ Write here the name and UAB mail of the group members:
 </br>1525973@uab.cat
 </br>1605189@uab.cat
 
+## Starting Point
+https://github.com/ruohoruotsi/LSTM-Music-Genre-Classification
+
 Xarxes Neuronals i Aprenentatge Profund
 Grau de Enginyeria de Dades, 
 UAB, 2023

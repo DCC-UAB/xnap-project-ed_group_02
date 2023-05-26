@@ -2,13 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-    PyTorch implementation of a simple 2-layer-deep LSTM for genre classification of musical audio.
-    Feeding the LSTM stack are spectral {centroid, contrast}, chromagram & MFCC features (33 total values)
-
-    Question: Why is there a PyTorch implementation, when we already have Keras/Tensorflow?
-    Answer:   So that we can learn more PyTorch and experiment with modulations on basic
-              architectures within the space of an "easy problem". For example, SRU or SincNets.
-              I'm am also curious about the relative performances of both toolkits.
+Proves per solucionar overfitting en el model inicial.
+Estan fetes sobre el codi inicial.
 
 """
 
@@ -35,19 +30,25 @@ class LSTM(nn.Module):
         self.num_layers = num_layers
 
         # setup LSTM layer
-        self.lstm = nn.LSTM(self.input_dim, self.hidden_dim, self.num_layers)
-
+        # Provem d'afegior un dropout dins de l'aplicació de LSTM.
+        # dropout 0   -> Epoch:  399 | NLLoss: 0.1285 | Train Accuracy: 95.95 | Val Loss 1.4644  | Val Accuracy: 59.05
+        # dropout 0.1 -> Epoch:  399 | NLLoss: 0.4740 | Train Accuracy: 83.10 | Val Loss 1.0325  | Val Accuracy: 66.67
+        # dropout 0.2 -> Epoch:  399 | NLLoss: 0.1153 | Train Accuracy: 96.43 | Val Loss 1.8697  | Val Accuracy: 66.67
+        # dropout 0.3 -> Epoch:  399 | NLLoss: 0.1727 | Train Accuracy: 93.81 | Val Loss 1.6191  | Val Accuracy: 65.71
+        # dropout 0.4 -> Epoch:  399 | NLLoss: 0.1959 | Train Accuracy: 94.05 | Val Loss 1.6092  | Val Accuracy: 63.81
+        self.lstm = nn.LSTM(self.input_dim, self.hidden_dim, self.num_layers, dropout = 0.1)
+                
         # setup output layer
         self.linear = nn.Linear(self.hidden_dim, output_dim)
 
-    def forward(self, input, state, c):
+    def forward(self, input, hidden=None):
         # lstm step => then ONLY take the sequence's final timetep to pass into the linear/dense layer
         # Note: lstm_out contains outputs for every step of the sequence we are looping over (for BPTT)
         # but we just need the output of the last step of the sequence, aka lstm_out[-1]
-        lstm_out, (state,c) = self.lstm(input, (state,c))
+        lstm_out, hidden = self.lstm(input, hidden)
         logits = self.linear(lstm_out[-1])              # equivalent to return_sequences=False from Keras
         genre_scores = F.log_softmax(logits, dim=1)
-        return genre_scores, state,c
+        return genre_scores, hidden
 
     def get_accuracy(self, logits, target):
         """ compute accuracy for training round """
@@ -56,10 +57,7 @@ class LSTM(nn.Module):
         ).sum()
         accuracy = 100.0 * corrects / self.batch_size
         return accuracy.item()
-    
-    def init_hidden(self, batch_size):
-        return nn.Parameter(torch.zeros(self.num_layers, batch_size, self.hidden_dim)), nn.Parameter(torch.zeros(self.num_layers, batch_size, self.hidden_dim))
-        
+
 
 def main():
     genre_features = GenreFeatureData()
@@ -97,7 +95,7 @@ def main():
     print("Test Y shape: " + str(genre_features.test_Y.shape))
 
     batch_size = 35  # num of training examples per minibatch
-    num_epochs = 100
+    num_epochs = 400
 
     # Define model
     print("Build LSTM RNN model ...")
@@ -105,9 +103,14 @@ def main():
         input_dim=33, hidden_dim=128, batch_size=batch_size, output_dim=8, num_layers=2
     )
     loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
-    
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
 
+    # Proves wight decay en el optimitzador.
+    # weight_decay = 12-3 -> Epoch:  399 | NLLoss: 0.0069 | Train Accuracy: 100.00 | Val Loss 2.0094  | Val Accuracy: 64.76
+    # wieght_decay = 1e-4 -> Epoch:  399 | NLLoss: 0.1214 | Train Accuracy: 96.90 | Val Loss 1.4123  | Val Accuracy: 67.62
+    # weight_decay = 1e-5 -> Epoch:  399 | NLLoss: 0.0303 | Train Accuracy: 99.52 | Val Loss 1.5367  | Val Accuracy: 66.67
+
+    weight_decay = 1e-3
+    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=weight_decay) 
     # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training
     stateful = False
 
@@ -116,11 +119,8 @@ def main():
         print("\nTraining on GPU")
     else:
         print("\nNo GPU, training on CPU")
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
+
     # all training data (epoch) / batch_size == num_batches (12)
-    #batch size ha de dividir 420 de forma entera 
-    #1,2,3,4,5,6,7,10,12,14,15,20,21,28,30,35,42,60,70,84,105,140,210,420
     num_batches = int(train_X.shape[0] / batch_size)
     num_dev_batches = int(dev_X.shape[0] / batch_size)
 
@@ -132,13 +132,9 @@ def main():
         train_running_loss, train_acc = 0.0, 0.0
 
         # Init hidden state - if you don't want a stateful LSTM (between epochs)
-        state, c = model.init_hidden(batch_size) # Start with a new state in each batch 
-        state = state.to(device) 
-        c = c.to(device)
-        
-        
+        hidden_state = None
         for i in range(num_batches):
-            
+
             # zero out gradient, so they don't accumulate btw batches
             model.zero_grad()
 
@@ -157,17 +153,16 @@ def main():
 
             # NLLLoss does not expect a one-hot encoded vector as the target, but class indices
             y_local_minibatch = torch.max(y_local_minibatch, 1)[1]
-            
-            X_local_minibatch=X_local_minibatch.to(device)
-            y_local_minibatch=y_local_minibatch.to(device)
-            
-            y_pred, state,c = model(X_local_minibatch, state,c)  # forward pass
-            
-            # Stateful = False for training. Do we go Stateful = True during inference/prediction time?
 
-            state.detach_()
-            c.detach_()
-            
+            y_pred, hidden_state = model(X_local_minibatch, hidden_state)  # forward pass
+
+            # Stateful = False for training. Do we go Stateful = True during inference/prediction time?
+            if not stateful:
+                hidden_state = None
+            else:
+                h_0, c_0 = hidden_state
+                h_0.detach_(), c_0.detach_()
+                hidden_state = (h_0, c_0)
 
             loss = loss_function(y_pred, y_local_minibatch)  # compute loss
             loss.backward()  # backward pass
@@ -181,7 +176,7 @@ def main():
             % (epoch, train_running_loss / num_batches, train_acc / num_batches)
         )
 
-        if epoch % 10 == 0:
+        if epoch % 10 == 0 or epoch == 399:
             print("Validation ...")  # should this be done every N=10 epochs
             val_running_loss, val_acc = 0.0, 0.0
 
@@ -189,11 +184,7 @@ def main():
             with torch.no_grad():
                 model.eval()
 
-                state, c = model.init_hidden(batch_size)
-                state = state.to(device) 
-                c = c.to(device)
-
-                
+                hidden_state = None
                 for i in range(num_dev_batches):
                     X_local_validation_minibatch, y_local_validation_minibatch = (
                         dev_X[i * batch_size: (i + 1) * batch_size, ],
@@ -201,11 +192,10 @@ def main():
                     )
                     X_local_minibatch = X_local_validation_minibatch.permute(1, 0, 2)
                     y_local_minibatch = torch.max(y_local_validation_minibatch, 1)[1]
-                    
-                    X_local_minibatch=X_local_minibatch.to(device)
-                    y_local_minibatch=y_local_minibatch.to(device)
 
-                    y_pred, state,c = model(X_local_minibatch, state,c)
+                    y_pred, hidden_state = model(X_local_minibatch, hidden_state)
+                    if not stateful:
+                        hidden_state = None
 
                     val_loss = loss_function(y_pred, y_local_minibatch)
 

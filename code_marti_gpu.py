@@ -27,15 +27,15 @@ class LSTM(nn.Module):
         # https://stackoverflow.com/questions/45493384/is-it-normal-to-use-batch-normalization-in-rnn-lstm
         self.batch_norm = nn.SyncBatchNorm(self.hidden_dim)
 
-    def forward(self, input, hidden=None):
+    def forward(self, input, h, c):
         # Normalització de l'entrada amb Recurrent BatchNorm
         input = self.batch_norm(input)
 
         # Pas de l'LSTM
-        lstm_out, hidden = self.lstm(input, hidden)
+        lstm_out, (h,c) = self.lstm(input, (h,c))
         logits = self.linear(lstm_out[:, -1, :])
         genre_scores = F.log_softmax(logits, dim=1)
-        return genre_scores, hidden
+        return genre_scores, h, c
 
     def get_accuracy(self, logits, target):
         """Calcula l'exactitud per a una ronda d'entrenament"""
@@ -81,7 +81,7 @@ def main():
     print("Mida de la sortida de prova:", genre_features.test_Y.shape)
 
     batch_size = 35
-    num_epochs = 400
+    num_epochs = 100
 
     # Definició del model
     print("Creant el model LSTM RNN...")
@@ -223,10 +223,13 @@ def main():
             batch_X = test_X[i : i + batch_size, :, :]
             batch_Y = test_Y[i : i + batch_size]
 
-            X_local_minibatch = batch_X.permute(1, 0, 2)
+            #X_local_minibatch = batch_X.permute(1, 0, 2)
             y_local_minibatch = torch.max(batch_Y, 1)[1]
-
-            output, _ = model(X_local_minibatch)
+            #X_local_minibatch = X_local_minibatch.to(device)
+            batch_X = batch_X.to(device)
+            y_local_minibatch = y_local_minibatch.to(device)
+            
+            output, _, _ = model(batch_X,state,c)
             accuracy = model.get_accuracy(output, y_local_minibatch)
             test_acc += accuracy
 
