@@ -81,7 +81,7 @@ def main():
     print("Mida de la sortida de prova:", genre_features.test_Y.shape)
 
     batch_size = 35
-    num_epochs = 400
+    num_epochs = 100
 
     # Definició del model
     print("Creant el model LSTM RNN...")
