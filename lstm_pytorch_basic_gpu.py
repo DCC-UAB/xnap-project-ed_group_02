@@ -63,7 +63,7 @@ class LSTM(nn.Module):
 
 def main():
     genre_features = GenreFeatureData()
-
+    genre_features.augmentar=True
     # if all of the preprocessed files do not exist, regenerate them all for self-consistency
     if (
             os.path.isfile(genre_features.train_X_preprocessed_data)
@@ -96,8 +96,8 @@ def main():
     print("Test X shape: " + str(genre_features.test_X.shape))
     print("Test Y shape: " + str(genre_features.test_Y.shape))
 
-    batch_size = 35  # num of training examples per minibatch
-    num_epochs = 100
+    batch_size = 120  # num of training examples per minibatch
+    num_epochs = 201
 
     # Define model
     print("Build LSTM RNN model ...")
@@ -235,6 +235,7 @@ def main():
     plt.xlabel("# of epochs")
     plt.ylabel("Loss")
     plt.title("LSTM: Loss vs # epochs")
+    plt.savefig('loss.png')
     plt.show()
 
     # visualization accuracy
@@ -242,7 +243,7 @@ def main():
     plt.xlabel("# of epochs")
     plt.ylabel("Accuracy")
     plt.title("LSTM: Accuracy vs # epochs")
-    # plt.savefig('graph.png')
+    plt.savefig('acuracy.png')
     plt.show()
 
 
