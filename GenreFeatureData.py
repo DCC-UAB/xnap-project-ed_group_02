@@ -20,7 +20,7 @@ class GenreFeatureData:
         "pop",
         "reggae",
     ]
-
+    
     dir_trainfolder = "./gtzan/_train"
     dir_devfolder = "./gtzan/_validation"
     dir_testfolder = "./gtzan/_test"
@@ -54,7 +54,7 @@ class GenreFeatureData:
         # self.precompute_min_timeseries_len()
         # print("min(self.timeseries_length_list) ==" + str(min(self.timeseries_length_list)))
         # self.timeseries_length = min(self.timeseries_length_list)
-
+        self.augmentar=False
         self.timeseries_length = (
             128
         )   # sequence length == 128, default fftsize == 2048 & hop == 512 @ SR of 22050
@@ -64,7 +64,7 @@ class GenreFeatureData:
         print("[DEBUG] total number of files: " + str(len(self.timeseries_length_list)))
 
         # Training set
-        self.train_X, self.train_Y = self.extract_audio_features(self.trainfiles_list)
+        self.train_X, self.train_Y = self.extract_audio_features(self.trainfiles_list,True)
         with open(self.train_X_preprocessed_data, "wb") as f:
             np.save(f, self.train_X)
         with open(self.train_Y_preprocessed_data, "wb") as f:
@@ -104,39 +104,80 @@ class GenreFeatureData:
             y, sr = librosa.load(file)
             self.timeseries_length_list.append(math.ceil(len(y) / self.hop_length))
 
-    def extract_audio_features(self, list_of_audiofiles):
-
-        data = np.zeros(
-            (len(list_of_audiofiles), self.timeseries_length, 33), dtype=np.float64
-        )
+    def extract_audio_features(self, list_of_audiofiles,entreno=False):
         target = []
-
-        for i, file in enumerate(list_of_audiofiles):
-            y, sr = librosa.load(file)
-            mfcc = librosa.feature.mfcc(
-                y=y, sr=sr, hop_length=self.hop_length, n_mfcc=13
+        if entreno and self.augmentar:
+            data = np.zeros(
+                (len(list_of_audiofiles)*3, self.timeseries_length, 33), dtype=np.float64
             )
-            spectral_center = librosa.feature.spectral_centroid(
-                y=y, sr=sr, hop_length=self.hop_length
-            )
-            chroma = librosa.feature.chroma_stft(y=y, sr=sr, hop_length=self.hop_length)
-            spectral_contrast = librosa.feature.spectral_contrast(
-                y=y, sr=sr, hop_length=self.hop_length
-            )
+            
+            for i, file in enumerate(list_of_audiofiles):
+                y, sr = librosa.load(file)
+                llista_aux=[y]
+                RMS=math.sqrt(np.mean(y**2))
+                noise=np.random.normal(0, RMS, y.shape[0])
+                llista_aux.append(y + noise*0.4)
+                if i%2==0:
+                    llista_aux.append(y*0.5)
+                else:
+                    llista_aux.append(y*2)
+                
+                n=0
+                for x in llista_aux:
+                    mfcc = librosa.feature.mfcc(
+                        y=x, sr=sr, hop_length=self.hop_length, n_mfcc=13
+                    )
+                    spectral_center = librosa.feature.spectral_centroid(
+                        y=x, sr=sr, hop_length=self.hop_length
+                    )
+                    chroma = librosa.feature.chroma_stft(y=x, sr=sr, hop_length=self.hop_length)
+                    spectral_contrast = librosa.feature.spectral_contrast(
+                        y=x, sr=sr, hop_length=self.hop_length
+                    )
 
-            splits = re.split("[ .]", file)
-            genre = re.split("[ /]", splits[1])[3]
-            target.append(genre)
+                    splits = re.split("[ .]", file)
+                    genre = re.split("[ /]", splits[1])[3]
+                    target.append(genre)
 
-            data[i, :, 0:13] = mfcc.T[0:self.timeseries_length, :]
-            data[i, :, 13:14] = spectral_center.T[0:self.timeseries_length, :]
-            data[i, :, 14:26] = chroma.T[0:self.timeseries_length, :]
-            data[i, :, 26:33] = spectral_contrast.T[0:self.timeseries_length, :]
+                    data[i*3+n, :, 0:13] = mfcc.T[0:self.timeseries_length, :]
+                    data[i*3+n, :, 13:14] = spectral_center.T[0:self.timeseries_length, :]
+                    data[i*3+n, :, 14:26] = chroma.T[0:self.timeseries_length, :]
+                    data[i*3+n, :, 26:33] = spectral_contrast.T[0:self.timeseries_length, :]
+                    n+=1
+                print(
+                    "Extracted features audio track %i of %i."
+                    % (i + 1, len(list_of_audiofiles))
+                )
+        else:
+            data = np.zeros(
+                (len(list_of_audiofiles), self.timeseries_length, 33), dtype=np.float64
+            )   
+            for i, file in enumerate(list_of_audiofiles):
+                y, sr = librosa.load(file)
+                mfcc = librosa.feature.mfcc(
+                    y=y, sr=sr, hop_length=self.hop_length, n_mfcc=13
+                )
+                spectral_center = librosa.feature.spectral_centroid(
+                    y=y, sr=sr, hop_length=self.hop_length
+                )
+                chroma = librosa.feature.chroma_stft(y=y, sr=sr, hop_length=self.hop_length)
+                spectral_contrast = librosa.feature.spectral_contrast(
+                    y=y, sr=sr, hop_length=self.hop_length
+                )
 
-            print(
-                "Extracted features audio track %i of %i."
-                % (i + 1, len(list_of_audiofiles))
-            )
+                splits = re.split("[ .]", file)
+                genre = re.split("[ /]", splits[1])[3]
+                target.append(genre)
+
+                data[i, :, 0:13] = mfcc.T[0:self.timeseries_length, :]
+                data[i, :, 13:14] = spectral_center.T[0:self.timeseries_length, :]
+                data[i, :, 14:26] = chroma.T[0:self.timeseries_length, :]
+                data[i, :, 26:33] = spectral_contrast.T[0:self.timeseries_length, :]
+
+                print(
+                    "Extracted features audio track %i of %i."
+                    % (i + 1, len(list_of_audiofiles))
+                )
 
         return data, np.expand_dims(np.asarray(target), axis=1)
 
