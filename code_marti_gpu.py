@@ -64,7 +64,7 @@ class LSTM(nn.Module):
 
 def main():
     genre_features = GenreFeatureData()
-
+    genre_features.augmentar=True
     # if all of the preprocessed files do not exist, regenerate them all for self-consistency
     if (
             os.path.isfile(genre_features.train_X_preprocessed_data)
