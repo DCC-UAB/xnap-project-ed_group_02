@@ -87,3 +87,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Fotos resultingfrom execucions, remove at the end of project
+*.png
