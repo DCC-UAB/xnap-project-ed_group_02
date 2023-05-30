@@ -19,7 +19,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
 
 from GenreFeatureData import (
     GenreFeatureData,
@@ -64,7 +65,7 @@ class LSTM(nn.Module):
 
 def main():
     genre_features = GenreFeatureData()
-    genre_features.augmentar=True
+    #genre_features.augmentar=True
     # if all of the preprocessed files do not exist, regenerate them all for self-consistency
     if (
             os.path.isfile(genre_features.train_X_preprocessed_data)
@@ -97,17 +98,17 @@ def main():
     print("Test X shape: " + str(genre_features.test_X.shape))
     print("Test Y shape: " + str(genre_features.test_Y.shape))
 
-    batch_size = 42  # num of training examples per minibatch
-    num_epochs = 201
+    batch_size = 35  # num of training examples per minibatch
+    num_epochs = 400
 
     # Define model
     print("Build LSTM RNN model ...")
     model = LSTM(
-        input_dim=128, hidden_dim=128, batch_size=batch_size, output_dim=8, num_layers=2
+        input_dim=33, hidden_dim=128, batch_size=batch_size, output_dim=8, num_layers=2
     )
     loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
     
-    optimizer = optim.Adam(model.parameters(), lr=0.0001)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training
     stateful = False
@@ -126,7 +127,9 @@ def main():
     num_dev_batches = int(dev_X.shape[0] / batch_size)
 
     val_loss_list, val_accuracy_list, epoch_list = [], [], []
-
+    train_accuracy_list=[]
+    train_loss_list=[]
+    epoch_train_list=[]
     print("Training ...")
     for epoch in range(num_epochs):
 
@@ -176,7 +179,9 @@ def main():
 
             train_running_loss += loss.detach().item()  # unpacks the tensor into a scalar value
             train_acc += model.get_accuracy(y_pred, y_local_minibatch)
-
+        train_accuracy_list.append(train_acc / num_batches)
+        train_loss_list.append(train_running_loss / num_batches)
+        epoch_train_list.append(epoch)
         print(
             "Epoch:  %d | NLLoss: %.4f | Train Accuracy: %.2f"
             % (epoch, train_running_loss / num_batches, train_acc / num_batches)
@@ -230,22 +235,79 @@ def main():
             epoch_list.append(epoch)
             val_accuracy_list.append(val_acc / num_dev_batches)
             val_loss_list.append(val_running_loss / num_dev_batches)
+    
+    print("Testing ...")  # should this be done every N=10 epochs
+    test_running_loss, test_acc = 0.0, 0.0
+    #num_test_batches = int(test_X.shape[0] / batch_size)
+    # Compute validation loss, accuracy. Use torch.no_grad() & model.eval()
+    conjunt_prediccions=[]
+    with torch.no_grad():
+        model.eval()
+
+        state, c = model.init_hidden(test_X.shape[0])
+        state = state.to(device) 
+        c = c.to(device)
+
+        
+        
+        X_local_test_minibatch, y_local_test_minibatch = (
+            test_X[:],
+            test_Y[:],
+        )
+        X_local_minibatch = X_local_test_minibatch.permute(1, 0, 2)
+        y_local_minibatch = torch.max(y_local_test_minibatch, 1)[1]
+        
+        X_local_minibatch=X_local_minibatch.to(device)
+        y_local_minibatch=y_local_minibatch.to(device)
+
+        y_pred, state,c = model(X_local_minibatch, state,c)
+
+        test_loss = loss_function(y_pred, y_local_minibatch)
+
+        test_running_loss = test_loss.detach().item()  # unpacks the tensor into a scalar value
+        test_acc = model.get_accuracy(y_pred, y_local_minibatch) *batch_size / test_X.shape[0]
+        
+        prediccions=torch.max(y_pred, 1)[1].view(y_local_minibatch.size()).data
+
+    
+
+    genre_list = ["classical","country","disco","hiphop","jazz","metal","pop","reggae"]
+    genres_usats=["classical","hiphop","jazz","metal","pop","reggae"]
+    prediccio=[]
+    veritat=[]
+    y_local_minibatch=y_local_minibatch.cpu()
+    prediccions=prediccions.cpu()
+    for element in y_local_minibatch:
+        veritat.append(genre_list[element])
+    for element in prediccions:
+        prediccio.append(genre_list[element])
+
+
 
     # visualization loss
-    plt.plot(epoch_list, val_loss_list)
+    plt.plot(epoch_train_list, train_loss_list)
     plt.xlabel("# of epochs")
     plt.ylabel("Loss")
     plt.title("LSTM: Loss vs # epochs")
     plt.savefig('loss.png')
     plt.show()
-
+    plt.clf()
     # visualization accuracy
-    plt.plot(epoch_list, val_accuracy_list, color="red")
+    plt.plot(epoch_train_list, train_accuracy_list, color="red")
     plt.xlabel("# of epochs")
     plt.ylabel("Accuracy")
     plt.title("LSTM: Accuracy vs # epochs")
     plt.savefig('acuracy.png')
     plt.show()
+    plt.clf()
+    #visualitzar matrius
+    fig = plt.figure()
+    sns.heatmap(confusion_matrix(veritat,prediccio)
+                ,xticklabels=genres_usats, yticklabels=genres_usats,annot=True,fmt='g')
+    fig.savefig('confusion.png', dpi=400)
+    fig.show()
+    print("Test Accuracy:",test_acc,"| Test Loss:",test_running_loss)
+
 
 if __name__ == "__main__":
     main()
