@@ -96,17 +96,17 @@ def main():
     print("Test X shape: " + str(genre_features.test_X.shape))
     print("Test Y shape: " + str(genre_features.test_Y.shape))
 
-    batch_size = 42  # num of training examples per minibatch
-    num_epochs = 1001
+    batch_size = 64  # num of training examples per minibatch
+    num_epochs = 250
 
     # Define model
     print("Build LSTM RNN model ...")
     model = LSTM(
-        input_dim=33, hidden_dim=124, batch_size=batch_size, output_dim=8, num_layers=3
+        input_dim=33, hidden_dim=62, batch_size=batch_size, output_dim=8, num_layers=2
     )
     loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
     
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
     # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training
     stateful = False
