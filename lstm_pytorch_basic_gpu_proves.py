@@ -127,7 +127,9 @@ def main():
     num_dev_batches = int(dev_X.shape[0] / batch_size)
 
     val_loss_list, val_accuracy_list, epoch_list = [], [], []
-
+    train_accuracy_list=[]
+    train_loss_list=[]
+    epoch_train_list=[]
     print("Training ...")
     for epoch in range(num_epochs):
 
@@ -177,7 +179,9 @@ def main():
 
             train_running_loss += loss.detach().item()  # unpacks the tensor into a scalar value
             train_acc += model.get_accuracy(y_pred, y_local_minibatch)
-
+        train_accuracy_list.append(train_acc / num_batches)
+        train_loss_list.append(train_running_loss / num_batches)
+        epoch_train_list.append(epoch)
         print(
             "Epoch:  %d | NLLoss: %.4f | Train Accuracy: %.2f"
             % (epoch, train_running_loss / num_batches, train_acc / num_batches)
@@ -281,21 +285,21 @@ def main():
 
 
     # visualization loss
-    plt.plot(epoch_list, val_loss_list)
+    plt.plot(epoch_train_list, train_loss_list)
     plt.xlabel("# of epochs")
     plt.ylabel("Loss")
     plt.title("LSTM: Loss vs # epochs")
     plt.savefig('loss.png')
     plt.show()
-
+    plt.clf()
     # visualization accuracy
-    plt.plot(epoch_list, val_accuracy_list, color="red")
+    plt.plot(epoch_train_list, train_accuracy_list, color="red")
     plt.xlabel("# of epochs")
     plt.ylabel("Accuracy")
     plt.title("LSTM: Accuracy vs # epochs")
     plt.savefig('acuracy.png')
     plt.show()
-
+    plt.clf()
     #visualitzar matrius
     fig = plt.figure()
     sns.heatmap(confusion_matrix(veritat,prediccio)
