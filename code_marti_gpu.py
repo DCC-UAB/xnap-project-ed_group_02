@@ -97,16 +97,17 @@ def main():
     print("Test Y shape: " + str(genre_features.test_Y.shape))
 
     batch_size = 64  # num of training examples per minibatch
-    num_epochs = 250
+    num_epochs = 1001
 
     # Define model
     print("Build LSTM RNN model ...")
     model = LSTM(
-        input_dim=33, hidden_dim=62, batch_size=batch_size, output_dim=8, num_layers=2
+        input_dim=128, hidden_dim=62, batch_size=batch_size, output_dim=8, num_layers=2
     )
     loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
     
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size = 10, gamma  = 0.1)
 
     # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training
     stateful = False
@@ -175,6 +176,7 @@ def main():
 
             train_running_loss += loss.detach().item()  # unpacks the tensor into a scalar value
             train_acc += model.get_accuracy(y_pred, y_local_minibatch)
+            scheduler.step()
 
         print(
             "Epoch:  %d | NLLoss: %.4f | Train Accuracy: %.2f"
