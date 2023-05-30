@@ -20,6 +20,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+
 from GenreFeatureData import (
     GenreFeatureData,
 )  # local python class with Audio feature extraction (librosa)
@@ -106,7 +107,7 @@ def main():
     )
     loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
     
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
     # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training
     stateful = False
@@ -235,7 +236,7 @@ def main():
     plt.xlabel("# of epochs")
     plt.ylabel("Loss")
     plt.title("LSTM: Loss vs # epochs")
-    plt.savefig('loss.png')
+    # plt.savefig('loss.png')
     plt.show()
 
     # visualization accuracy
@@ -243,9 +244,8 @@ def main():
     plt.xlabel("# of epochs")
     plt.ylabel("Accuracy")
     plt.title("LSTM: Accuracy vs # epochs")
-    plt.savefig('acuracy.png')
+    # plt.savefig('acuracy.png')
     plt.show()
-
 
 if __name__ == "__main__":
     main()
