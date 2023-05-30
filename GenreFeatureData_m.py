@@ -124,25 +124,14 @@ class GenreFeatureData:
                 
                 n=0
                 for x in llista_aux:
-                    mfcc = librosa.feature.mfcc(
-                        y=x, sr=sr, hop_length=self.hop_length, n_mfcc=13
-                    )
-                    spectral_center = librosa.feature.spectral_centroid(
-                        y=x, sr=sr, hop_length=self.hop_length
-                    )
-                    chroma = librosa.feature.chroma_stft(y=x, sr=sr, hop_length=self.hop_length)
-                    spectral_contrast = librosa.feature.spectral_contrast(
-                        y=x, sr=sr, hop_length=self.hop_length
-                    )
+                    spectrogram = librosa.feature.melspectrogram(y=x, sr=sr, hop_length=self.hop_length, n_mels=128)
+                    log_mel_spectrogram = librosa.amplitude_to_db(spectrogram, ref=np.max)
 
                     splits = re.split("[ .]", file)
                     genre = re.split("[ /]", splits[1])[3]
                     target.append(genre)
 
-                    data[i*3+n, :, 0:13] = mfcc.T[0:self.timeseries_length, :]
-                    data[i*3+n, :, 13:14] = spectral_center.T[0:self.timeseries_length, :]
-                    data[i*3+n, :, 14:26] = chroma.T[0:self.timeseries_length, :]
-                    data[i*3+n, :, 26:33] = spectral_contrast.T[0:self.timeseries_length, :]
+                    data[i*3+n, :, :] = log_mel_spectrogram[:, :self.timeseries_length].T
                     n+=1
                 print(
                     "Extracted features audio track %i of %i."
