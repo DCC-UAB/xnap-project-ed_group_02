@@ -285,7 +285,9 @@ def main():
 
 
     # visualization loss
-    plt.plot(epoch_train_list, train_loss_list)
+    f1 = plt.figure()
+    plt.plot(epoch_train_list, train_loss_list,color="blue")
+    plt.plot(epoch_list, val_loss_list,color="red")
     plt.xlabel("# of epochs")
     plt.ylabel("Loss")
     plt.title("LSTM: Loss vs # epochs")
@@ -293,13 +295,17 @@ def main():
     plt.show()
     plt.clf()
     # visualization accuracy
-    plt.plot(epoch_train_list, train_accuracy_list, color="red")
+    f1 = plt.figure()
+    plt.plot(epoch_list, val_accuracy_list, color="red")
+    plt.plot(epoch_train_list, train_accuracy_list, color="blue")
     plt.xlabel("# of epochs")
     plt.ylabel("Accuracy")
     plt.title("LSTM: Accuracy vs # epochs")
     plt.savefig('acuracy.png')
     plt.show()
     plt.clf()
+
+
     #visualitzar matrius
     fig = plt.figure()
     sns.heatmap(confusion_matrix(veritat,prediccio)
