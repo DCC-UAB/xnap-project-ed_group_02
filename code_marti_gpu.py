@@ -20,7 +20,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-from GenreFeatureData import (
+from GenreFeatureData_m import (
     GenreFeatureData,
 )  # local python class with Audio feature extraction (librosa)
 
@@ -96,13 +96,13 @@ def main():
     print("Test X shape: " + str(genre_features.test_X.shape))
     print("Test Y shape: " + str(genre_features.test_Y.shape))
 
-    batch_size = 120  # num of training examples per minibatch
-    num_epochs = 201
+    batch_size = 42  # num of training examples per minibatch
+    num_epochs = 1001
 
     # Define model
     print("Build LSTM RNN model ...")
     model = LSTM(
-        input_dim=33, hidden_dim=128, batch_size=batch_size, output_dim=8, num_layers=2
+        input_dim=33, hidden_dim=124, batch_size=batch_size, output_dim=8, num_layers=3
     )
     loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
     

@@ -2,9 +2,8 @@ import librosa
 import math
 import os
 import re
+
 import numpy as np
-import matplotlib.pyplot as plt
-from librosa.display import specshow
 
 
 class GenreFeatureData:
@@ -21,7 +20,7 @@ class GenreFeatureData:
         "pop",
         "reggae",
     ]
-
+    
     dir_trainfolder = "./gtzan/_train"
     dir_devfolder = "./gtzan/_validation"
     dir_testfolder = "./gtzan/_test"
@@ -51,14 +50,21 @@ class GenreFeatureData:
         self.all_files_list.extend(self.devfiles_list)
         self.all_files_list.extend(self.testfiles_list)
 
-        self.augmentar = False
-        self.timeseries_length = 128
+        # compute minimum timeseries length, slow to compute, caching pre-computed value of 1290
+        # self.precompute_min_timeseries_len()
+        # print("min(self.timeseries_length_list) ==" + str(min(self.timeseries_length_list)))
+        # self.timeseries_length = min(self.timeseries_length_list)
+        self.augmentar=False
+        self.timeseries_length = (
+            128
+        )   # sequence length == 128, default fftsize == 2048 & hop == 512 @ SR of 22050
+        #  equals 128 overlapped windows that cover approx ~3.065 seconds of audio, which is a bit small!
 
     def load_preprocess_data(self):
         print("[DEBUG] total number of files: " + str(len(self.timeseries_length_list)))
 
         # Training set
-        self.train_X, self.train_Y = self.extract_audio_features(self.trainfiles_list, True)
+        self.train_X, self.train_Y = self.extract_audio_features(self.trainfiles_list,True)
         with open(self.train_X_preprocessed_data, "wb") as f:
             np.save(f, self.train_X)
         with open(self.train_Y_preprocessed_data, "wb") as f:
@@ -92,64 +98,89 @@ class GenreFeatureData:
         self.test_X = np.load(self.test_X_preprocessed_data)
         self.test_Y = np.load(self.test_Y_preprocessed_data)
 
-    def extract_audio_features(self, list_of_audiofiles, augment=False):
-
-        # Allocate empty array for feature data
-        data = np.zeros(
-            (len(list_of_audiofiles), self.timeseries_length, 128), dtype=np.float64
-        )
-
-        target = []
-        for i, file in enumerate(list_of_audiofiles):
-
-            # Load audio file
+    def precompute_min_timeseries_len(self):
+        for file in self.all_files_list:
+            print("Loading " + str(file))
             y, sr = librosa.load(file)
+            self.timeseries_length_list.append(math.ceil(len(y) / self.hop_length))
 
-            # Augmentation: Pitch shift
-            if augment:
-                n_steps = np.random.randint(low=-5, high=5)
-                y = librosa.effects.pitch_shift(y, sr, n_steps)
-
-            # Calculate spectrogram
-            spectrogram = librosa.feature.melspectrogram(
-                y=y, sr=sr, hop_length=self.hop_length
+    def extract_audio_features(self, list_of_audiofiles,entreno=False):
+        target = []
+        if entreno and self.augmentar:
+            data = np.zeros(
+                (len(list_of_audiofiles)*3, self.timeseries_length, 33), dtype=np.float64
             )
-            spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
+            
+            for i, file in enumerate(list_of_audiofiles):
+                y, sr = librosa.load(file)
+                llista_aux=[y]
+                RMS=math.sqrt(np.mean(y**2))
+                noise=np.random.normal(0, RMS, y.shape[0])
+                llista_aux.append(y + noise*0.4)
+                if i%2==0:
+                    llista_aux.append(y*0.5)
+                else:
+                    llista_aux.append(y*2)
+                
+                n=0
+                for x in llista_aux:
+                    mfcc = librosa.feature.mfcc(
+                        y=x, sr=sr, hop_length=self.hop_length, n_mfcc=13
+                    )
+                    spectral_center = librosa.feature.spectral_centroid(
+                        y=x, sr=sr, hop_length=self.hop_length
+                    )
+                    chroma = librosa.feature.chroma_stft(y=x, sr=sr, hop_length=self.hop_length)
+                    spectral_contrast = librosa.feature.spectral_contrast(
+                        y=x, sr=sr, hop_length=self.hop_length
+                    )
 
-            # Store spectrogram in data array
-            data[i, :, :] = spectrogram_db.T[0:self.timeseries_length, :]
+                    splits = re.split("[ .]", file)
+                    genre = re.split("[ /]", splits[1])[3]
+                    target.append(genre)
 
-            # Extract target genre from file path
-            target_genre = re.findall(r"[a-z]+(?=/)", file)[0]
-            target.append(target_genre)
+                    data[i*3+n, :, 0:13] = mfcc.T[0:self.timeseries_length, :]
+                    data[i*3+n, :, 13:14] = spectral_center.T[0:self.timeseries_length, :]
+                    data[i*3+n, :, 14:26] = chroma.T[0:self.timeseries_length, :]
+                    data[i*3+n, :, 26:33] = spectral_contrast.T[0:self.timeseries_length, :]
+                    n+=1
+                print(
+                    "Extracted features audio track %i of %i."
+                    % (i + 1, len(list_of_audiofiles))
+                )
+        else:
+            data = np.zeros((len(list_of_audiofiles), self.timeseries_length, 128), dtype=np.float64)
 
-        return data, target
+            for i, file in enumerate(list_of_audiofiles):
+                y, sr = librosa.load(file)
+                spectrogram = librosa.feature.melspectrogram(y=y, sr=sr, hop_length=self.hop_length, n_mels=128)
+                log_mel_spectrogram = librosa.amplitude_to_db(spectrogram, ref=np.max)
 
-    def path_to_audiofiles(self, dir_folder):
-        return [
-            os.path.join(dir_folder, f)
-            for f in os.listdir(dir_folder)
-            if f.endswith(".wav")
-        ]
+                splits = re.split("[ .]", file)
+                genre = re.split("[ /]", splits[1])[3]
+                target.append(genre)
 
-    def plot_audio_features(self, audio_file):
-        y, sr = librosa.load(audio_file)
-        spectrogram = librosa.feature.melspectrogram(y=y, sr=sr, hop_length=self.hop_length)
-        spectrogram_db = librosa.power_to_db(spectrogram, ref=np.max)
+                data[i, :, :] = log_mel_spectrogram[:, :self.timeseries_length].T
 
-        plt.figure(figsize=(10, 4))
-        specshow(spectrogram_db, sr=sr, hop_length=self.hop_length, x_axis="time", y_axis="mel")
-        plt.colorbar(format="%+2.0f dB")
-        plt.title("Mel Spectrogram")
-        plt.show()
+                print("Extracted features audio track %i of %i." % (i + 1, len(list_of_audiofiles)))
 
-    def one_hot(self, Y):
-        label_binarizer = self.get_label_binarizer()
-        return label_binarizer.transform(Y)
+            return data, np.expand_dims(np.asarray(target), axis=1)
 
-    def get_label_binarizer(self):
-        from sklearn.preprocessing import LabelBinarizer
 
-        label_binarizer = LabelBinarizer()
-        label_binarizer.fit(self.genre_list)
-        return label_binarizer
+    def one_hot(self, Y_genre_strings):
+        y_one_hot = np.zeros((Y_genre_strings.shape[0], len(self.genre_list)))
+        for i, genre_string in enumerate(Y_genre_strings):
+            index = self.genre_list.index(genre_string)
+            y_one_hot[i, index] = 1
+        return y_one_hot
+
+    @staticmethod
+    def path_to_audiofiles(dir_folder):
+        list_of_audio = []
+        for file in os.listdir(dir_folder):
+            if file.endswith(".au"):
+                directory = "%s/%s" % (dir_folder, file)
+                list_of_audio.append(directory)
+        return list_of_audio
+
+
