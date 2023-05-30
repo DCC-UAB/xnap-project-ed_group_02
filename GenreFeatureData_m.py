@@ -108,7 +108,7 @@ class GenreFeatureData:
         target = []
         if entreno and self.augmentar:
             data = np.zeros(
-                (len(list_of_audiofiles)*3, self.timeseries_length, 33), dtype=np.float64
+                (len(list_of_audiofiles)*3, self.timeseries_length, 128), dtype=np.float64
             )
             
             for i, file in enumerate(list_of_audiofiles):
@@ -153,7 +153,7 @@ class GenreFeatureData:
 
                 print("Extracted features audio track %i of %i." % (i + 1, len(list_of_audiofiles)))
 
-            return data, np.expand_dims(np.asarray(target), axis=1)
+        return data, np.expand_dims(np.asarray(target), axis=1)
 
 
     def one_hot(self, Y_genre_strings):
