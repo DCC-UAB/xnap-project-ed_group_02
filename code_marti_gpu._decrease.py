@@ -36,7 +36,7 @@ class LSTM(nn.Module):
 
         # setup LSTM layer
         self.lstm = nn.LSTM(self.input_dim, self.hidden_dim, self.num_layers)
-        self.dropout = nn.Dropout(p=0.2)
+        self.dropout = nn.Dropout(p=0)
 
         # setup output layer
         self.linear = nn.Linear(self.hidden_dim, output_dim)

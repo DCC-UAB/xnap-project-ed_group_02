@@ -90,3 +90,5 @@ ENV/
 
 # Fotos resultingfrom execucions, remove at the end of project
 *.png
+#ignore the dataset
+gtzan/
