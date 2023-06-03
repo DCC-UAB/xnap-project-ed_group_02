@@ -59,7 +59,7 @@ El conjunt de dades utilitzat per a l'entrenament i avaluació consisteix en mos
 
 El conjunt de dades es divideix en tres subconjunts: entrenament, validació i prova. El conjunt d'entrenament s'utilitza per entrenar el model, el conjunt de validació es fa servir per a monitorar el rendiment del model durant l'entrenament i el conjunt de prova es fa servir per avaluar el model final.
 
-## Arquitectura del model
+## Models
 
 El model LSTM consisteix en dues capes LSTM seguides d'una capa de sortida lineal. La dimensió d'entrada de les capes LSTM és 33, que correspon al nombre de característiques d'àudio. La dimensió oculta s'estableix a 64 per a cada capa LSTM. El model s'entrena utilitzant l'algorisme de propagació endavant (forward propagation) i retropropagació (backpropagation) per ajustar els pesos dels paràmetres del model.
 
