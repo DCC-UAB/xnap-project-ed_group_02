@@ -92,3 +92,4 @@ ENV/
 *.png
 #ignore the dataset
 gtzan/
+fma/
