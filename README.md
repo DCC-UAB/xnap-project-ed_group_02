@@ -100,10 +100,6 @@ Aquest model és una implementació en PyTorch d'un LSTM de 2 capes per a la cla
 En resum, aquest model presenta canvis significatius en l'arquitectura de la LSTM, la funció de pèrdua, l'optimitzador i altres aspectes del codi respecte al model anterior. També inclou visualització de resultats.
 
 
-
-
-
-
 ## Entrenament
 
 Per entrenar el model, seguiu els següents passos:
