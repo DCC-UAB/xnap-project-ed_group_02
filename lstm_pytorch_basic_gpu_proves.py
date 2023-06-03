@@ -21,8 +21,9 @@ import torch.nn.functional as F
 import torch.optim as optim
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
+import pandas as pd
 
-from GenreFeatureData import (
+from GenreFeatureDataFMA import (
     GenreFeatureData,
 )  # local python class with Audio feature extraction (librosa)
 from entrenament import entrenar
@@ -99,7 +100,7 @@ def main():
     print("Test Y shape: " + str(genre_features.test_Y.shape))
 
     batch_size = 35  # num of training examples per minibatch
-    num_epochs = 400
+    num_epochs = 2
 
     # Define model
     print("Build LSTM RNN model ...")
@@ -113,7 +114,7 @@ def main():
     # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training
     # stateful = False
     conjunt_entrenament=(train_X,train_Y,dev_X,dev_Y,test_X,test_Y)
-    entrenar(model,conjunt_entrenament,optimizer)
+    entrenar(model,conjunt_entrenament,optimizer,num_epochs=num_epochs)
     
 
 if __name__ == "__main__":
