@@ -35,7 +35,7 @@ Aquest repositori conté una implementació en PyTorch d'un model LSTM de 2 cape
 
 L'objectiu d'aquest projecte és classificar àudio musical en diferents gèneres utilitzant una aproximació de deep learning. El model LSTM s'entrena amb un conjunt de dades amb característiques d'àudio extretes utilitzant la llibreria librosa. Les característiques inclouen el centroid espectral, el contrast, el cromagrama i els coeficients cepstral de Mel, resultant en un total de 33 dimensions d'entrada.
 
-L'objectiu d'aquest projecte es probar diferents models i mètodes per tal d'arribar a trobar diferents alternatives al projecte inicial.
+La idea d'aquest exercici pràctic es probar diferents models i mètodes per tal d'arribar a trobar diferents alternatives al projecte inicial.
 
 ## Dependències
 
@@ -61,7 +61,48 @@ El conjunt de dades es divideix en tres subconjunts: entrenament, validació i p
 
 ## Models
 
-El model LSTM consisteix en dues capes LSTM seguides d'una capa de sortida lineal. La dimensió d'entrada de les capes LSTM és 33, que correspon al nombre de característiques d'àudio. La dimensió oculta s'estableix a 64 per a cada capa LSTM. El model s'entrena utilitzant l'algorisme de propagació endavant (forward propagation) i retropropagació (backpropagation) per ajustar els pesos dels paràmetres del model.
+**_Starting Point: lstm.pytorch.original_**
+
+Aquest és un codi en Python que implementa un model LSTM (Long Short-Term Memory) de 2 capes per a la classificació de gènere de música utilitzant PyTorch. L'arquitectura del model consisteix en una pila de capes LSTM seguida d'una capa de sortida.
+
+Aquí hi ha una explicació de les parts importants del codi:
+
+1. La definició de la classe LSTM: Aquesta classe hereta de `nn.Module` de PyTorch i defineix les capes LSTM i la capa de sortida del model. S'inicialitzen els paràmetres com la dimensió d'entrada, la dimensió oculta, el tamany del lot, la dimensió de sortida i el nombre de capes LSTM.
+
+2. La funció `forward`: Aquesta funció defineix el pas endavant (forward pass) del model. Processa les dades d'entrada a través de les capes LSTM i retorna la sortida final del model. Aplica una funció de softmax a la sortida per obtenir una distribució de probabilitat sobre els gèneres musicals.
+
+3. La funció `get_accuracy`: Aquesta funció calcula l'exactitud (accuracy) del model per a una ronda d'entrenament. Compara les prediccions del model amb les etiquetes reals i calcula el percentatge d'instàncies classificades correctament.
+
+4. La funció `main`: Aquesta funció principal gestiona el flux principal del programa. Carrega les dades d'àudio pre-processades, defineix el model LSTM, especifica la funció de pèrdua (loss function) i l'optimitzador per a l'entrenament, i realitza el bucle d'entrenament durant diverses èpoques. També calcula la pèrdua i l'exactitud de la validació en certs intervals d'èpoques.
+
+En resum, aquest codi implementa i entrena un model LSTM per a la classificació de gènere de música utilitzant dades d'àudio pre-processades. Utilitza PyTorch com a framework per a la construcció i l'entrenament del model.
+
+**_GPU/Visualització/Entrenament: lstm.pytorch.basic.gpu_**
+
+Aquest model és una implementació en PyTorch d'un LSTM de 2 capes per a la classificació de gènere musical utilitzant característiques espectrals, cromàtiques i MFCC com a dades d'entrada. A continuació, es detallen les diferències d'aquest model respecte al model anterior:
+
+1. Arquitectura del model: En aquest model, s'utilitza una capa LSTM de 2 capes amb una dimensió d'entrada de 33. El model anterior només tenia una capa LSTM.
+
+2. Inicialització dels pesos: En aquest model, els pesos de la LSTM es inicialitzen mitjançant `nn.LSTM` en el constructor de la classe `LSTM`. En el model anterior, no es mostra explícitament com s'inicialitzen els pesos de la LSTM.
+
+3. Funció de pèrdua: En aquest model, s'utilitza la funció `nn.NLLLoss` (Negative Log Likelihood Loss) com a funció de pèrdua. Això és diferent de la funció `categorical_crossentropy` que s'utilitzava en el model anterior.
+
+4. Optimitzador: En aquest model, s'utilitza l'optimitzador Adam amb una taxa d'aprenentatge de 0.001 mitjançant `optim.Adam(model.parameters(), lr=0.001)`. En el model anterior, no es mostra explícitament com s'inicialitza l'optimitzador ni la taxa d'aprenentatge utilitzada.
+
+5. Inicialització de l'estat ocult: En aquest model, l'estat ocult de la LSTM es reinicialitza a cada iteració de lot mitjançant `model.init_hidden(batch_size)`. Això és diferent del model anterior, on l'estat ocult no es reinicialitza a cada iteració de lot.
+
+6. Ús de GPU: En aquest model, es comprova si una GPU està disponible mitjançant `torch.cuda.is_available()`, i si és així, es mou el model i les dades a la GPU. En el model anterior, no es mostra com es comprova ni com es mouen les dades a la GPU.
+
+7. Bucle d'entrenament: En aquest model, hi ha un bucle d'entrenament que recorre diverses èpoques i minilots per a cada època. El model anterior també tenia un bucle d'entrenament similar, però amb algunes diferències en com es processen els minilots.
+
+8. Visualització de resultats: Aquest model inclou la visualització de la pèrdua i la precisió de validació en cada època utilitzant gràfics de línia. Això és diferent del model anterior, on no es mostra com es visualitzen els resultats.
+
+En resum, aquest model presenta canvis significatius en l'arquitectura de la LSTM, la funció de pèrdua, l'optimitzador i altres aspectes del codi respecte al model anterior. També inclou visualització de resultats.
+
+
+
+
+
 
 ## Entrenament
 
