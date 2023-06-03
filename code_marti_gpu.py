@@ -100,7 +100,7 @@ def main():
     num_epochs = 1001
 
     # Define model
-    print("Build LSTM RNN model ...")
+    print("Build LSTM model ...")
     model = LSTM(
         input_dim=33, hidden_dim=62, batch_size=batch_size, output_dim=8, num_layers=2
     )
