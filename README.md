@@ -17,37 +17,37 @@ L'arxiu requeriments.txt esta desactualitzat.</br>
 
 # PyTorch LSTM Classificació de Gènere - README
 
-Aquest repositori conté una implementació en PyTorch d'un model LSTM de 2 capes per a la classificació de gènere de música. El model LSTM s'entrena amb diverses característiques d'àudio com ara el centroid espectral, el contrast, el cromagrama i els coeficients cepstral de Mel (MFCC).
+Aquest repositori conté una implementació en PyTorch d'un model LSTM de 2 capes per a la classificació de gènere de música. El model LSTM s'entrena amb diverses característiques d'àudio com ara el centroid espectral, el contrast, el cromagrama i els coeficients cepstral de Mel (MFCC).</br>
 
 ## Taula de continguts
 
-- [Introducció](#introducció)
-- [Dependències](#dependències)
-- [Conjunt de dades](#conjunt-de-dades)
-- [Models](#models)
-- [Entrenament](#entrenament)
-- [Avaluació](#avaluació)
-- [Resultats](#resultats)
-- [Ús](#ús)
-- [Llicència](#llicència)
+- [Introducció](#introducció)</br>
+- [Dependències](#dependències)</br>
+- [Conjunt de dades](#conjunt-de-dades)</br>
+- [Models](#models)</br>
+- [Entrenament](#entrenament)</br>
+- [Avaluació](#avaluació)</br>
+- [Resultats](#resultats)</br>
+- [Ús](#ús)</br>
+- [Llicència](#llicència)</br>
 
 ## Introducció
 
-L'objectiu d'aquest projecte és classificar àudio musical en diferents gèneres utilitzant una aproximació de deep learning. El model LSTM s'entrena amb un conjunt de dades amb característiques d'àudio extretes utilitzant la llibreria librosa. Les característiques inclouen el centroid espectral, el contrast, el cromagrama i els coeficients cepstral de Mel, resultant en un total de 33 dimensions d'entrada.
+L'objectiu d'aquest projecte és classificar àudio musical en diferents gèneres utilitzant una aproximació de deep learning. El model LSTM s'entrena amb un conjunt de dades amb característiques d'àudio extretes utilitzant la llibreria librosa. Les característiques inclouen el centroid espectral, el contrast, el cromagrama i els coeficients cepstral de Mel, resultant en un total de 33 dimensions d'entrada.</br>
 
-La idea d'aquest exercici pràctic es probar diferents models i mètodes per tal d'arribar a trobar diferents alternatives al projecte inicial.
+La idea d'aquest exercici pràctic es probar diferents models i mètodes per tal d'arribar a trobar diferents alternatives al projecte inicial.</br>
 
 ## Dependències
 
-Les següents dependències són necessàries per executar el codi:
+Les següents dependències són necessàries per executar el codi:</br>
 
-- Python 3.x
-- PyTorch
-- NumPy
-- librosa
-- matplotlib
+- Python 3.x</br>
+- PyTorch</br>
+- NumPy</br>
+- librosa</br>
+- matplotlib</br>
 
-Podeu instal·lar les dependències requerides executant la següent comanda:
+Podeu instal·lar les dependències requerides executant la següent comanda:</br>
 
 ```bash
 pip install torch numpy librosa matplotlib
@@ -55,90 +55,96 @@ pip install torch numpy librosa matplotlib
 
 ## Conjunt de dades
 
-El conjunt de dades utilitzat per a l'entrenament i avaluació consisteix en mostres d'àudio de diferents gèneres. Els fitxers d'àudio es pre-processen per extreure les característiques desitjades utilitzant la classe GenreFeatureData, que fa servir la llibreria librosa. Les dades pre-processades es guarden en format NumPy per a una càrrega eficient durant l'entrenament i l'avaluació.
+El conjunt de dades utilitzat per a l'entrenament i avaluació consisteix en mostres d'àudio de diferents gèneres. Els fitxers d'àudio es pre-processen per extreure les característiques desitjades utilitzant la classe GenreFeatureData, que fa servir la llibreria librosa. Les dades pre-processades es guarden en format NumPy per a una càrrega eficient durant l'entrenament i l'avaluació.</br>
 
-El conjunt de dades es divideix en tres subconjunts: entrenament, validació i prova. El conjunt d'entrenament s'utilitza per entrenar el model, el conjunt de validació es fa servir per a monitorar el rendiment del model durant l'entrenament i el conjunt de prova es fa servir per avaluar el model final.
+El conjunt de dades es divideix en tres subconjunts: entrenament, validació i prova. El conjunt d'entrenament s'utilitza per entrenar el model, el conjunt de validació es fa servir per a monitorar el rendiment del model durant l'entrenament i el conjunt de prova es fa servir per avaluar el model final.</br>
 
 ## Models
 
-**_Starting Point: lstm.pytorch.original_**
+**_Starting Point: lstm.pytorch.original_**</br>
 
-Aquest és un codi en Python que implementa un model LSTM (Long Short-Term Memory) de 2 capes per a la classificació de gènere de música utilitzant PyTorch. L'arquitectura del model consisteix en una pila de capes LSTM seguida d'una capa de sortida.
+Aquest és un codi en Python que implementa un model LSTM (Long Short-Term Memory) de 2 capes per a la classificació de gènere de música utilitzant PyTorch. L'arquitectura del model consisteix en una pila de capes LSTM seguida d'una capa de sortida.</br>
 
-Aquí hi ha una explicació de les parts importants del codi:
+Aquí hi ha una explicació de les parts importants del codi:</br>
 
-1. La definició de la classe LSTM: Aquesta classe hereta de `nn.Module` de PyTorch i defineix les capes LSTM i la capa de sortida del model. S'inicialitzen els paràmetres com la dimensió d'entrada, la dimensió oculta, el tamany del lot, la dimensió de sortida i el nombre de capes LSTM.
+1. La definició de la classe LSTM: Aquesta classe hereta de `nn.Module` de PyTorch i defineix les capes LSTM i la capa de sortida del model. S'inicialitzen els paràmetres com la dimensió d'entrada, la dimensió oculta, el tamany del lot, la dimensió de sortida i el nombre de capes LSTM.</br>
 
-2. La funció `forward`: Aquesta funció defineix el pas endavant (forward pass) del model. Processa les dades d'entrada a través de les capes LSTM i retorna la sortida final del model. Aplica una funció de softmax a la sortida per obtenir una distribució de probabilitat sobre els gèneres musicals.
+2. La funció `forward`: Aquesta funció defineix el pas endavant (forward pass) del model. Processa les dades d'entrada a través de les capes LSTM i retorna la sortida final del model. Aplica una funció de softmax a la sortida per obtenir una distribució de probabilitat sobre els gèneres musicals.</br>
 
-3. La funció `get_accuracy`: Aquesta funció calcula l'exactitud (accuracy) del model per a una ronda d'entrenament. Compara les prediccions del model amb les etiquetes reals i calcula el percentatge d'instàncies classificades correctament.
+3. La funció `get_accuracy`: Aquesta funció calcula l'exactitud (accuracy) del model per a una ronda d'entrenament. Compara les prediccions del model amb les etiquetes reals i calcula el percentatge d'instàncies classificades correctament.</br>
 
-4. La funció `main`: Aquesta funció principal gestiona el flux principal del programa. Carrega les dades d'àudio pre-processades, defineix el model LSTM, especifica la funció de pèrdua (loss function) i l'optimitzador per a l'entrenament, i realitza el bucle d'entrenament durant diverses èpoques. També calcula la pèrdua i l'exactitud de la validació en certs intervals d'èpoques.
+4. La funció `main`: Aquesta funció principal gestiona el flux principal del programa. Carrega les dades d'àudio pre-processades, defineix el model LSTM, especifica la funció de pèrdua (loss function) i l'optimitzador per a l'entrenament, i realitza el bucle d'entrenament durant diverses èpoques. També calcula la pèrdua i l'exactitud de la validació en certs intervals d'èpoques.</br>
 
-En resum, aquest codi implementa i entrena un model LSTM per a la classificació de gènere de música utilitzant dades d'àudio pre-processades. Utilitza PyTorch com a framework per a la construcció i l'entrenament del model.
+En resum, aquest codi implementa i entrena un model LSTM per a la classificació de gènere de música utilitzant dades d'àudio pre-processades. Utilitza PyTorch com a framework per a la construcció i l'entrenament del model.</br>
 
-**_GPU/Visualització/Entrenament: lstm.pytorch.basic.gpu_**
+**_GPU/Visualització/Entrenament: lstm.pytorch.basic.gpu_**</br>
 
-Aquest model és una implementació en PyTorch d'un LSTM de 2 capes per a la classificació de gènere musical utilitzant característiques espectrals, cromàtiques i MFCC com a dades d'entrada. A continuació, es detallen les diferències d'aquest model respecte al model anterior:
+Aquest model és una implementació en PyTorch d'un LSTM de 2 capes per a la classificació de gènere musical utilitzant característiques espectrals, cromàtiques i MFCC com a dades d'entrada. A continuació, es detallen les diferències d'aquest model respecte al model anterior:</br>
 
-1. Arquitectura del model: En aquest model, s'utilitza una capa LSTM de 2 capes amb una dimensió d'entrada de 33. El model anterior només tenia una capa LSTM.
+1. Arquitectura del model: En aquest model, s'utilitza una capa LSTM de 2 capes amb una dimensió d'entrada de 33. El model anterior només tenia una capa LSTM.</br>
 
-2. Inicialització dels pesos: En aquest model, els pesos de la LSTM es inicialitzen mitjançant `nn.LSTM` en el constructor de la classe `LSTM`. En el model anterior, no es mostra explícitament com s'inicialitzen els pesos de la LSTM.
+2. Inicialització dels pesos: En aquest model, els pesos de la LSTM es inicialitzen mitjançant `nn.LSTM` en el constructor de la classe `LSTM`. En el model anterior, no es mostra explícitament com s'inicialitzen els pesos de la LSTM.</br>
 
-3. Funció de pèrdua: En aquest model, s'utilitza la funció `nn.NLLLoss` (Negative Log Likelihood Loss) com a funció de pèrdua. Això és diferent de la funció `categorical_crossentropy` que s'utilitzava en el model anterior.
+3. Funció de pèrdua: En aquest model, s'utilitza la funció `nn.NLLLoss` (Negative Log Likelihood Loss) com a funció de pèrdua. Això és diferent de la funció `categorical_crossentropy` que s'utilitzava en el model anterior.</br>
 
-4. Optimitzador: En aquest model, s'utilitza l'optimitzador Adam amb una taxa d'aprenentatge de 0.001 mitjançant `optim.Adam(model.parameters(), lr=0.001)`. En el model anterior, no es mostra explícitament com s'inicialitza l'optimitzador ni la taxa d'aprenentatge utilitzada.
+4. Optimitzador: En aquest model, s'utilitza l'optimitzador Adam amb una taxa d'aprenentatge de 0.001 mitjançant `optim.Adam(model.parameters(), lr=0.001)`. En el model anterior, no es mostra explícitament com s'inicialitza l'optimitzador ni la taxa d'aprenentatge utilitzada.</br>
 
-5. Inicialització de l'estat ocult: En aquest model, l'estat ocult de la LSTM es reinicialitza a cada iteració de lot mitjançant `model.init_hidden(batch_size)`. Això és diferent del model anterior, on l'estat ocult no es reinicialitza a cada iteració de lot.
+5. Inicialització de l'estat ocult: En aquest model, l'estat ocult de la LSTM es reinicialitza a cada iteració de lot mitjançant `model.init_hidden(batch_size)`. Això és diferent del model anterior, on l'estat ocult no es reinicialitza a cada iteració de lot.</br>
 
-6. Ús de GPU: En aquest model, es comprova si una GPU està disponible mitjançant `torch.cuda.is_available()`, i si és així, es mou el model i les dades a la GPU. En el model anterior, no es mostra com es comprova ni com es mouen les dades a la GPU.
+6. Ús de GPU: En aquest model, es comprova si una GPU està disponible mitjançant `torch.cuda.is_available()`, i si és així, es mou el model i les dades a la GPU. En el model anterior, no es mostra com es comprova ni com es mouen les dades a la GPU.</br>
 
-7. Bucle d'entrenament: En aquest model, hi ha un bucle d'entrenament que recorre diverses èpoques i minilots per a cada època. El model anterior també tenia un bucle d'entrenament similar, però amb algunes diferències en com es processen els minilots.
+7. Bucle d'entrenament: En aquest model, hi ha un bucle d'entrenament que recorre diverses èpoques i minilots per a cada època. El model anterior també tenia un bucle d'entrenament similar, però amb algunes diferències en com es processen els minilots.</br>
 
-8. Visualització de resultats: Aquest model inclou la visualització de la pèrdua i la precisió de validació en cada època utilitzant gràfics de línia. Això és diferent del model anterior, on no es mostra com es visualitzen els resultats.
+8. Visualització de resultats: Aquest model inclou la visualització de la pèrdua i la precisió de validació en cada època utilitzant gràfics de línia. Això és diferent del model anterior, on no es mostra com es visualitzen els resultats.</br>
 
-En resum, aquest model presenta canvis significatius en l'arquitectura de la LSTM, la funció de pèrdua, l'optimitzador i altres aspectes del codi respecte al model anterior. També inclou visualització de resultats.
+En resum, aquest model presenta canvis significatius en l'arquitectura de la LSTM, la funció de pèrdua, l'optimitzador i altres aspectes del codi respecte al model anterior. També inclou visualització de resultats.</br>
 
 
-**_Optimització de paràmetres, canvi en la funció loss i Dropout: lstm.pytorch.optim_**
+**_Optimització de paràmetres, canvi en la funció loss i Dropout: lstm.pytorch.optim_**</br>
 
+En aquest model a diferència del anterior, trobem una capa adicional de dropout. També hem passat d'utilitzar el GenreFeatureData al GenreFeatureData_m (aquest GenreFeature ens retorna les característiques d'audio, però aquestes a diferencia del anterior GenreFeature provenen d'espectogrames de mel que han sigut pasats a una representació logarítimica per posteriorment extreure les seves característiques).</br>
+
+Finalment, s'ha implementat un learning schedule i canviat la funció que utilitzavem per calcular la loss. A continuació els tres schedules utilitzats.</br>
+
+Lstm.pytorch.optim.ReduceLROnPlateau: en aquest model s'ha utilitzat el schedule ReduceLROnPlateau que consisteix en monotoritzar el accuracy durant cada època d'entrenament. Si l'accuracy no millora durant un determinat nombre d'èpoques ( 10) consecutives, la taxa d'aprenentatge es redueix en un factor predeterminat
 
 
 
 ## Entrenament
 
-Per entrenar el model, seguiu els següents passos:
+Per entrenar el model, seguiu els següents passos:</br>
 
-1. Assegureu-vos d'haver instal·lat totes les dependències esmentades a la secció [Dependències](#dependències).
-2. Baixeu el conjunt de dades o prepareu el vostre propi conjunt de dades amb mostres d'àudio i les seves etiquetes de gènere corresponents.
-3. Pre-processeu les mostres d'àudio i extreu les característiques d'àudio utilitzant la classe GenreFeatureData. Desa les dades pre-processades en format NumPy.
-4. Modifiqueu la funció `main()` en el codi per proporcionar la ruta de les dades pre-processades i ajustar altres hiperparàmetres si cal.
-5. Executeu el codi utilitzant la següent comanda:
+1. Assegureu-vos d'haver instal·lat totes les dependències esmentades a la secció [Dependències](#dependències).</br>
+2. Baixeu el conjunt de dades o prepareu el vostre propi conjunt de dades amb mostres d'àudio i les seves etiquetes de gènere corresponents.</br>
+3. Pre-processeu les mostres d'àudio i extreu les característiques d'àudio utilitzant la classe GenreFeatureData. Desa les dades pre-processades en format NumPy.</br>
+4. Modifiqueu la funció `main()` en el codi per proporcionar la ruta de les dades pre-processades i ajustar altres hiperparàmetres si cal.</br>
+5. Executeu el codi utilitzant la següent comanda:</br>
 
 ```bash
 python lstm_genre_classification.py
 ```
+</br>
 
-6. Seguiu el progrés de l'entrenament a través de les mètriques de pèrdua (loss) i precisió (accuracy) que es mostren.
-7. Després de l'entrenament, avalueu el rendiment del model en el conjunt de proves observant la mètrica de precisió (accuracy).
-8. Visualitzeu els gràfics de pèrdua (loss) i precisió (accuracy) de l'entrenament per analitzar el rendiment del model durant l'entrenament.
+6. Seguiu el progrés de l'entrenament a través de les mètriques de pèrdua (loss) i precisió (accuracy) que es mostren.</br>
+7. Després de l'entrenament, avalueu el rendiment del model en el conjunt de proves observant la mètrica de precisió (accuracy).</br>
+8. Visualitzeu els gràfics de pèrdua (loss) i precisió (accuracy) de l'entrenament per analitzar el rendiment del model durant l'entrenament.</br>
 
 ## Avaluació
 
-Per avaluar el model entrenat en el conjunt de proves, executeu el codi com es descriu a la secció [Entrenament](#entrenament). El codi calcularà la precisió (accuracy) del model en el conjunt de proves i mostrarà el resultat.
+Per avaluar el model entrenat en el conjunt de proves, executeu el codi com es descriu a la secció [Entrenament](#entrenament). El codi calcularà la precisió (accuracy) del model en el conjunt de proves i mostrarà el resultat.</br>
 
 ## Resultats
 
-Els resultats del model són la precisió (accuracy) obtinguda en el conjunt de proves. Aquesta mètrica indica la capacitat del model per classificar correctament les mostres d'àudio en els gèneres corresponents. Els resultats també es poden visualitzar en forma de gràfics de pèrdua (loss) i precisió (accuracy) durant l'entrenament.
+Els resultats del model són la precisió (accuracy) obtinguda en el conjunt de proves. Aquesta mètrica indica la capacitat del model per classificar correctament les mostres d'àudio en els gèneres corresponents. Els resultats també es poden visualitzar en forma de gràfics de pèrdua (loss) i precisió (accuracy) durant l'entrenament.</br>
 
 ## Ús
 
-Podeu utilitzar aquest codi com a punt de partida per a la vostra pròpia classificació de gènere d'àudio utilitzant PyTorch. Feu les modificacions necessàries per adaptar-lo al vostre conjunt de dades i requeriments específics.
+Podeu utilitzar aquest codi com a punt de partida per a la vostra pròpia classificació de gènere d'àudio utilitzant PyTorch. Feu les modificacions necessàries per adaptar-lo al vostre conjunt de dades i requeriments específics.</br>
 
 ## Agraïments
 
-- Els canvis fets estàn inspirats amb les pràctiques i exemples fets durant l'assignatura.
-- El conjunt de dades utilitzat per a l'entrenament i avaluació és una adaptació d'un conjunt de dades disponible públicament. Moltes gràcies als creadors del conjunt de dades original.
+- Els canvis fets estàn inspirats amb les pràctiques i exemples fets durant l'assignatura.</br>
+- El conjunt de dades utilitzat per a l'entrenament i avaluació és una adaptació d'un conjunt de dades disponible públicament. Moltes gràcies als creadors del conjunt de dades original.</br>
 
 
 
