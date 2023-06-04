@@ -104,12 +104,12 @@ def main():
     # Define model
     print("Build LSTM RNN model ...")
     model = LSTM(
-        input_dim=128, hidden_dim=64, batch_size=batch_size, output_dim=8, num_layers=2
+        input_dim=33, hidden_dim=64, batch_size=batch_size, output_dim=8, num_layers=2
     )
-    loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
+    loss_function = nn.CrossEntropyLoss()  # expects ouputs from LogSoftmax
     
 
-    lr = 0.0001
+    lr = 0.001
     optimizer = optim.Adam(model.parameters(), lr)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',factor = lr *0.1, patience=10, verbose=False)
     # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training

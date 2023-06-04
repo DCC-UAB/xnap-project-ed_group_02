@@ -36,8 +36,7 @@ class LSTM(nn.Module):
 
         # setup LSTM layer
         self.lstm = nn.LSTM(self.input_dim, self.hidden_dim, self.num_layers)
-        self.dropout = nn.Dropout(p=0.2)
-
+        self.dropout = nn.Dropout(p=0.3)
         # setup output layer
         self.linear = nn.Linear(self.hidden_dim, output_dim)
 
@@ -104,9 +103,9 @@ def main():
     # Define model
     print("Build LSTM RNN model ...")
     model = LSTM(
-        input_dim=128, hidden_dim=64, batch_size=batch_size, output_dim=8, num_layers=2
+        input_dim=33, hidden_dim=64, batch_size=batch_size, output_dim=8, num_layers=2
     )
-    loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
+    loss_function = nn.CrossEntropyLoss()  # expects ouputs from LogSoftmax
     
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)

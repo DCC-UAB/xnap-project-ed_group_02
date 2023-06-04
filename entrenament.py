@@ -128,7 +128,10 @@ def entrenar(model,conjunt_entrenament,optimizer,scheduler=None,loss_function=nn
                     )
                 )
                 if scheduler!=None:
-                    scheduler.step()
+                    if scheduler.__class__.__name__ == "ReduceLROnPlateau":
+                        scheduler.step(val_loss)
+                    else: 
+                        scheduler.step()
 
             epoch_list.append(epoch)
             val_accuracy_list.append(val_acc / num_dev_batches)
@@ -207,4 +210,5 @@ def entrenar(model,conjunt_entrenament,optimizer,scheduler=None,loss_function=nn
         fig.savefig('Confusion.png', dpi=400)
         fig.show()
         print("Test Accuracy:",test_acc,"| Test Loss:",test_running_loss)
+
 
