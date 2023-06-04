@@ -96,8 +96,8 @@ def main():
     print("Test X shape: " + str(genre_features.test_X.shape))
     print("Test Y shape: " + str(genre_features.test_Y.shape))
 
-    batch_size = 32  # num of training examples per minibatch
-    num_epochs = 1001
+    batch_size = 35  # num of training examples per minibatch
+    num_epochs = 400
 
     # Define model
     print("Build LSTM RNN model ...")
