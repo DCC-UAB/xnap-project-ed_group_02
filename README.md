@@ -24,7 +24,7 @@ Aquest repositori conté una implementació en PyTorch d'un model LSTM de 2 cape
 - [Introducció](#introducció)
 - [Dependències](#dependències)
 - [Conjunt de dades](#conjunt-de-dades)
-- [Arquitectura del model](#arquitectura-del-model)
+- [Models](#models)
 - [Entrenament](#entrenament)
 - [Avaluació](#avaluació)
 - [Resultats](#resultats)
@@ -98,6 +98,11 @@ Aquest model és una implementació en PyTorch d'un LSTM de 2 capes per a la cla
 8. Visualització de resultats: Aquest model inclou la visualització de la pèrdua i la precisió de validació en cada època utilitzant gràfics de línia. Això és diferent del model anterior, on no es mostra com es visualitzen els resultats.
 
 En resum, aquest model presenta canvis significatius en l'arquitectura de la LSTM, la funció de pèrdua, l'optimitzador i altres aspectes del codi respecte al model anterior. També inclou visualització de resultats.
+
+
+**_Optimització de paràmetres, canvi en la funció loss i Dropout: lstm.pytorch.optim_**
+
+
 
 
 ## Entrenament
