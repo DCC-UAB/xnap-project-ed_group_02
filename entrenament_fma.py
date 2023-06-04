@@ -169,8 +169,10 @@ def entrenar(model,conjunt_entrenament,optimizer,scheduler=None,loss_function=nn
 
     
 
-    genre_list = ["classical","country","disco","hiphop","jazz","metal","pop","reggae"]
-    genres_usats=["classical","hiphop","jazz","metal","pop","reggae"]
+    genre_list = ['Hip-Hop', 'Pop', 'Folk', 'Experimental', 'Rock'
+                  , 'International','Electronic', 'Instrumental']
+    #genres_usats=["classical","hiphop","jazz","metal","pop","reggae"]
+    
     prediccio=[]
     veritat=[]
     y_local_minibatch=y_local_minibatch.cpu()
@@ -201,7 +203,7 @@ def entrenar(model,conjunt_entrenament,optimizer,scheduler=None,loss_function=nn
         #visualitzar matrius
         fig = plt.figure()
         sns.heatmap(confusion_matrix(veritat,prediccio)
-                    ,xticklabels=genres_usats, yticklabels=genres_usats,annot=True,fmt='g')
+                    ,xticklabels=genre_list, yticklabels=genre_list,annot=True,fmt='g')
         fig.savefig('Confusion.png', dpi=400)
         fig.show()
         print("Test Accuracy:",test_acc,"| Test Loss:",test_running_loss)
