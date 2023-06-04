@@ -36,6 +36,7 @@ class LSTM(nn.Module):
 
         # setup LSTM layer
         self.lstm = nn.LSTM(self.input_dim, self.hidden_dim, self.num_layers)
+        self.dropout = nn.Dropout(p=0.3)
 
         # setup output layer
         self.linear = nn.Linear(self.hidden_dim, output_dim)
@@ -45,6 +46,7 @@ class LSTM(nn.Module):
         # Note: lstm_out contains outputs for every step of the sequence we are looping over (for BPTT)
         # but we just need the output of the last step of the sequence, aka lstm_out[-1]
         lstm_out, (state,c) = self.lstm(input, (state,c))
+        x = self.dropout(self.dropout(lstm_out[-1]))
         logits = self.linear(lstm_out[-1])              # equivalent to return_sequences=False from Keras
         genre_scores = F.log_softmax(logits, dim=1)
         return genre_scores, state,c
@@ -100,14 +102,14 @@ def main():
     num_epochs = 1001
 
     # Define model
-    print("Build LSTM model ...")
+    print("Build LSTM RNN model ...")
     model = LSTM(
-        input_dim=33, hidden_dim=62, batch_size=batch_size, output_dim=8, num_layers=2
+        input_dim=33, hidden_dim=64, batch_size=batch_size, output_dim=8, num_layers=2
     )
-    loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
+    loss_function = nn.CrossEntropyLoss()  # expects ouputs from LogSoftmax
     
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',factor = 0.1, patience=10, verbose=False)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
     # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training
     stateful = False
 
@@ -226,7 +228,7 @@ def main():
                         val_acc / num_dev_batches,
                     )
                 )
-                scheduler.step(val_loss)
+                scheduler.step()
 
             epoch_list.append(epoch)
             val_accuracy_list.append(val_acc / num_dev_batches)
