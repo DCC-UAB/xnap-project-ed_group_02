@@ -1,0 +1,52 @@
+StepLR
+
+StepLR - Lr: 0.001 - DropOut: 0.3
+Validation ...
+Epoch:  1000 | NLLoss: 0.5256 | Train Accuracy: 79.77 | Val Loss 1.0444  | Val Accuracy: 73.44
+Testing ...
+Test Accuracy: 58.333333333333336 | Test Loss: 1.0553237199783325
+
+StepLR - Lr: 0.0001 - DropOut: 0.3
+Validation ...
+Epoch:  1000 | NLLoss: 0.9340 | Train Accuracy: 67.52 | Val Loss 0.8757  | Val Accuracy: 68.75
+Testing ...
+Test Accuracy: 58.333333333333336 | Test Loss: 1.1086078882217407
+
+CosineAnnealing
+
+Cosinus - Lr: 0.0001 - DropOut: 0.3
+Validation ...
+Epoch:  1000 | NLLoss: 0.3907 | Train Accuracy: 87.42 | Val Loss 1.2080  | Val Accuracy: 62.50
+Testing ...
+Test Accuracy: 55.0 | Test Loss: 1.71863782405853
+
+Cosinus - Lr: 0.001 - DropOut: 0.3
+Validation ...
+Epoch:  1000 | NLLoss: 0.1059 | Train Accuracy: 96.63 | Val Loss 1.8855  | Val Accuracy: 68.75
+Testing ...
+Test Accuracy: 68.33333333333333 | Test Loss: 2.116081953048706
+
+Plateau 
+
+Plateau - Lr:0.001 - Dropout: 0
+Epoch:  1000 | NLLoss: 0.5253 | Train Accuracy: 81.41 | Val Loss 1.1815  | Val Accuracy: 68.75
+Testing ...
+Test Accuracy: 55.0 | Test Loss: 1.6814463138580322
+
+Plateua - Lr = 0.0001 - Dropout: 0 
+Validation ...
+Epoch:  1000 | NLLoss: 0.7021 | Train Accuracy: 75.74 | Val Loss 0.8900  | Val Accuracy: 70.31
+Testing ...
+Test Accuracy: 55.0 | Test Loss: 1.0649762153625488
+
+Plateau - Lr: 0.001 - DropOut: 0.3
+Validation ...
+Epoch:  1000 | NLLoss: 0.5924 | Train Accuracy: 78.70 | Val Loss 0.8942  | Val Accuracy: 71.88
+Testing ...
+Test Accuracy: 60.0 | Test Loss: 1.2041093111038208
+
+Plateau - Lr:0.0001 - Dropout: 0.3 
+Validation ...
+Epoch:  1000 | NLLoss: 0.9260 | Train Accuracy: 61.02 | Val Loss 1.1141  | Val Accuracy: 59.38
+Testing ...
+Test Accuracy: 55.0 | Test Loss: 1.122015357017517
