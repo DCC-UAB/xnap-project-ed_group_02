@@ -98,8 +98,8 @@ def entrenar(model,conjunt_entrenament,optimizer,scheduler=None,loss_function=nn
                 
                 for i in range(num_dev_batches):
                     X_local_validation_minibatch, y_local_validation_minibatch = (
-                        dev_X[:],
-                        dev_Y[:],
+                        dev_X[i * batch_size: (i + 1) * batch_size, ],
+                        dev_Y[i * batch_size: (i + 1) * batch_size, ],
                     )
                     X_local_minibatch = X_local_validation_minibatch.permute(1, 0, 2)
                     y_local_minibatch = torch.max(y_local_validation_minibatch, 1)[1]
