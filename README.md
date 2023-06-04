@@ -83,19 +83,15 @@ Aquest model és una implementació en PyTorch d'un LSTM de 2 capes per a la cla
 
 1. Arquitectura del model: En aquest model, s'utilitza una capa LSTM de 2 capes amb una dimensió d'entrada de 33. El model anterior només tenia una capa LSTM.</br>
 
-2. Inicialització dels pesos: En aquest model, els pesos de la LSTM es inicialitzen mitjançant `nn.LSTM` en el constructor de la classe `LSTM`. En el model anterior, no es mostra explícitament com s'inicialitzen els pesos de la LSTM.</br>
+2. Funció de pèrdua: En aquest model, s'utilitza la funció `nn.NLLLoss` (Negative Log Likelihood Loss) com a funció de pèrdua. Això és diferent de la funció `categorical_crossentropy` que s'utilitzava en el model anterior.</br>
 
-3. Funció de pèrdua: En aquest model, s'utilitza la funció `nn.NLLLoss` (Negative Log Likelihood Loss) com a funció de pèrdua. Això és diferent de la funció `categorical_crossentropy` que s'utilitzava en el model anterior.</br>
+3. Inicialització de l'estat ocult: En aquest model, l'estat ocult de la LSTM es reinicialitza a cada iteració de lot mitjançant `model.init_hidden(batch_size)`. Això és diferent del model anterior, on l'estat ocult no es reinicialitza a cada iteració de lot.</br>
 
-4. Optimitzador: En aquest model, s'utilitza l'optimitzador Adam amb una taxa d'aprenentatge de 0.001 mitjançant `optim.Adam(model.parameters(), lr=0.001)`. En el model anterior, no es mostra explícitament com s'inicialitza l'optimitzador ni la taxa d'aprenentatge utilitzada.</br>
+4. Ús de GPU: En aquest model, es comprova si una GPU està disponible mitjançant `torch.cuda.is_available()`, i si és així, es mou el model i les dades a la GPU. En el model anterior, no es mostra com es comprova ni com es mouen les dades a la GPU.</br>
 
-5. Inicialització de l'estat ocult: En aquest model, l'estat ocult de la LSTM es reinicialitza a cada iteració de lot mitjançant `model.init_hidden(batch_size)`. Això és diferent del model anterior, on l'estat ocult no es reinicialitza a cada iteració de lot.</br>
+5. Bucle d'entrenament: En aquest model, hi ha un bucle d'entrenament que recorre diverses èpoques i minilots per a cada època. El model anterior també tenia un bucle d'entrenament similar, però amb algunes diferències en com es processen els minilots.</br>
 
-6. Ús de GPU: En aquest model, es comprova si una GPU està disponible mitjançant `torch.cuda.is_available()`, i si és així, es mou el model i les dades a la GPU. En el model anterior, no es mostra com es comprova ni com es mouen les dades a la GPU.</br>
-
-7. Bucle d'entrenament: En aquest model, hi ha un bucle d'entrenament que recorre diverses èpoques i minilots per a cada època. El model anterior també tenia un bucle d'entrenament similar, però amb algunes diferències en com es processen els minilots.</br>
-
-8. Visualització de resultats: Aquest model inclou la visualització de la pèrdua i la precisió de validació en cada època utilitzant gràfics de línia. Això és diferent del model anterior, on no es mostra com es visualitzen els resultats.</br>
+6. Visualització de resultats: Aquest model inclou la visualització de la pèrdua i la precisió de validació en cada època utilitzant gràfics de línia. Això és diferent del model anterior, on no es mostra com es visualitzen els resultats.</br>
 
 En resum, aquest model presenta canvis significatius en l'arquitectura de la LSTM, la funció de pèrdua, l'optimitzador i altres aspectes del codi respecte al model anterior. També inclou visualització de resultats.</br>
 
@@ -106,8 +102,19 @@ En aquest model a diferència del anterior, trobem una capa adicional de dropout
 
 Finalment, s'ha implementat un learning schedule i canviat la funció que utilitzavem per calcular la loss. A continuació els tres schedules utilitzats.</br>
 
-***Lstm_pytorch_optim_ReduceLROnPlateau:*** en aquest model s'ha utilitzat el schedule ReduceLROnPlateau que consisteix en monotoritzar el accuracy durant cada època d'entrenament. Si l'accuracy no millora durant un determinat nombre d'èpoques ( 10) consecutives, la taxa d'aprenentatge es redueix en un factor predeterminat (lr*0.1). La idea d'aquest schedule és ajustar el pas d'aprenentatge per aconseguir una millor convergència.</br>
+**Lstm_pytorch_optim_ReduceLROnPlateau:** en aquest model s'ha utilitzat el schedule ReduceLROnPlateau que consisteix en monotoritzar el accuracy durant cada època d'entrenament. Si l'accuracy no millora durant un determinat nombre d'èpoques ( 10) consecutives, la taxa d'aprenentatge es redueix en un factor predeterminat (lr*0.1). La idea d'aquest schedule és ajustar el pas d'aprenentatge per aconseguir una millor convergència.</br>
 
+**Lstm_pytorch_optim_CosineAnnealingLR:** el CosineAnnealingLR redueix gradualment la taxa d'aprenentatge durant el procés d'entrenament, seguint una funció de cosinus. Comença amb una taxa d'aprenentatge inicial alta i va disminuint fins a un valor mínim. A continuació, la taxa d'aprenentatge augmenta novament fins al seu valor inicial. Aquest procés es repeteix en cada cicle d'entrenament.<br>
+
+La idea principal d'aquesta tècnica és permetre que el model "explori" diferents regions de l'espai de paràmetres, utilitzant una taxa d'aprenentatge més alta en les primeres etapes de l'entrenament per moure's més ràpidament i una taxa d'aprenentatge més baixa a mesura que es va aproximant a possibles òptims locals. Això pot ajudar a millorar el rendiment i evitar quedar-se estancat en òptims locals subòptims.<br>
+
+Finalment el schedule utilitzat: <br>
+
+**Lstm_pytorch_optim_StepLR:** El StepLR redueix la taxa d'aprenentatge en punts específics durant l'entrenament, anomenats "passos". Aquests passos estan determinats per un valor fix de nombre d'èpoques. Quan el nombre d'èpoques d'entrenament arriba a un d'aquests passos, la taxa d'aprenentatge es redueix segons un factor predefinit.<br>
+
+L'objectiu principal d'utilitzar l'algorisme StepLR és ajustar la taxa d'aprenentatge per millorar el rendiment del model al llarg de l'entrenament. Reduir la taxa d'aprenentatge en moments específics pot ajudar a estabilitzar i refinar el model, especialment en situacions en què el model pot sobreajustar-se o quan s'acosta a un òptim local.<br>
+
+***Lstm_pytorch_optim serà el nostre millor model**<br>
 
 
 ## Entrenament
