@@ -104,7 +104,7 @@ def main():
     # Define model
     print("Build LSTM RNN model ...")
     model = LSTM(
-        input_dim=33, hidden_dim=64, batch_size=batch_size, output_dim=8, num_layers=2
+        input_dim=128, hidden_dim=64, batch_size=batch_size, output_dim=8, num_layers=2
     )
     loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
     
