@@ -56,16 +56,16 @@ El conjunt de dades es divideix en tres subconjunts: entrenament, validació i p
 
 El dataset GTZAN es pot obtenir des de el repositoir del starting point o be del Kaggle</br>
 Aquest dataset té un total de 600 arxius, separats en tres carpetes: train, validation i test.
-La primera consta de 420 arxius, la segona de 120 i la darrera de 60.
+La primera consta de 420 arxius, la segona de 120 i la darrera de 60.</br>
 Els arxius es troben en format *genere.id.au* on genere te 6 possibles classes i id és únic fins i tot entre carpetes diferents. Per tant es tracta d'un dataset molt fàcil de tractar.
 
 ### Fma small
 
 El dataset [FMA small](https://www.kaggle.com/datasets/imsparsh/fma-free-music-archive-small-medium?select=fma_small)
-conte 8000 arxius. No els trobem com en l'altre datasets, tenim dues diferències molt importants:
--No ho tenim dividit en test i train
--No tenim la classe en el nom de l'aixiu
-Els arxius es troben en format *id.mp3* dintre de 155 carpetes diferents.
+conte 8000 arxius. No els trobem com en l'altre datasets, tenim dues diferències molt importants:</br>
+-No ho tenim dividit en test i train</br>
+-No tenim la classe en el nom de l'aixiu</br>
+Els arxius es troben en format *id.mp3* dintre de 155 carpetes diferents.</br>
 
 
 ## Dataloader
