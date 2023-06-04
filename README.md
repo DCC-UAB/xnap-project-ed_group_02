@@ -114,7 +114,7 @@ Finalment el schedule utilitzat: <br>
 
 L'objectiu principal d'utilitzar l'algorisme StepLR és ajustar la taxa d'aprenentatge per millorar el rendiment del model al llarg de l'entrenament. Reduir la taxa d'aprenentatge en moments específics pot ajudar a estabilitzar i refinar el model, especialment en situacions en què el model pot sobreajustar-se o quan s'acosta a un òptim local.<br>
 
-***Lstm_pytorch_optim serà el nostre millor model**<br>
+**Lstm_pytorch_optim serà el nostre millor model**<br>
 
 
 ## Entrenament
