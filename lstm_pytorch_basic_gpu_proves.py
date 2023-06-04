@@ -119,6 +119,10 @@ def main():
 
     # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training
     # stateful = False
+    #fem axo per provar
+    #train_X=torch.cat((train_X,dev_X),0)
+    #train_Y=torch.cat((train_Y,dev_Y),0)
+
     conjunt_entrenament=(train_X,train_Y,dev_X,dev_Y,test_X,test_Y)
     entrenar(model,conjunt_entrenament,optimizer,batch_size=64,num_epochs=1001,scheduler=scheduler)
     
