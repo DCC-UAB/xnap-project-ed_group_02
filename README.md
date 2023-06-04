@@ -46,18 +46,24 @@ Les següents dependències són necessàries per executar el codi:</br>
 - NumPy</br>
 - librosa</br>
 - matplotlib</br>
+- seaborn</br>
+- pandas
+- scikit-learn
 
 Podeu instal·lar les dependències requerides executant la següent comanda:</br>
 
 ```bash
-pip install torch numpy librosa matplotlib
+pip install torch numpy librosa matplotlib seaborn pandas scikit-learn
 ```
 
 ## Conjunt de dades
 
 El conjunt de dades utilitzat per a l'entrenament i avaluació consisteix en mostres d'àudio de diferents gèneres. Els fitxers d'àudio es pre-processen per extreure les característiques desitjades utilitzant la classe GenreFeatureData, que fa servir la llibreria librosa. Les dades pre-processades es guarden en format NumPy per a una càrrega eficient durant l'entrenament i l'avaluació.</br>
 
-El conjunt de dades es divideix en tres subconjunts: entrenament, validació i prova. El conjunt d'entrenament s'utilitza per entrenar el model, el conjunt de validació es fa servir per a monitorar el rendiment del model durant l'entrenament i el conjunt de prova es fa servir per avaluar el model final.</br>
+El conjunt de dades es divideix en tres subconjunts: entrenament, validació i prova. El conjunt d'entrenament s'utilitza per entrenar el model, el conjunt de validació es fa servir per a monitorar el rendiment del model durant l'entrenament i el conjunt de prova es fa servir per avaluar el model final.
+</br>
+
+El dataset GTZAN es pot obtenir des de el repositoir del starting point o be del Kaggle
 
 ## Models
 
@@ -116,7 +122,7 @@ L'objectiu principal d'utilitzar l'algorisme StepLR és ajustar la taxa d'aprene
 
 **Lstm_pytorch_optim serà el nostre millor model**<br>
 
-***Model CNN***
+***Altres: Model CNN***
 
 S’ha intentat implementar un nou model per la classificació de música segons el gènere on s'utilitzen les imatges MFCC, coeficients per la representació de la senyal d’audio.
 MFCC ens permet obtenir informació sobre audios obviant el soroll.
@@ -178,12 +184,11 @@ Podeu utilitzar aquest codi com a punt de partida per a la vostra pròpia classi
 - El conjunt de dades utilitzat per a l'entrenament i avaluació és una adaptació d'un conjunt de dades disponible públicament. Moltes gràcies als creadors del conjunt de dades original.</br>
 
 
-
 ## Contributors
 Write here the name and UAB mail of the group members:
-</br>1568073@uab.cat
-</br>1525973@uab.cat
-</br>1605189@uab.cat
+</br> Daniel Paulí - 1568073@uab.cat
+</br> Bernat Planelles - 1525973@uab.cat
+</br> Marti Torrents - 1605189@uab.cat
 
 ## Starting Point
 Aquest projecte s'ha desenvolupat a partir del seguent setatring point:</br>
