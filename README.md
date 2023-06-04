@@ -162,6 +162,7 @@ El diccionari es guarda en un fitxer JSON pel train, test i validation respectiv
 El model CNN que segueix la següent estructura:
 3 Capes convulacionals, amb un kernel ( 3x3 ) i un padding de 1, per detectar patrons importants en el MFCC.
 3 Capes d’agrupació MaxPooling que de les característiques extretes en les capes anteriors es queda amb el valor més gran per a cada regió.
+
 3 Capes de normalització BatchNorm2d, que tenen com objectiu facilitar l’entrenament i una millor convergencia de la red.
 A més s’ha utilitzat la funció d’activació ReLU per evitar linealitat després de cada capa de convolució i finalment unes capes Flatten, Linear, ReLU i DropOut que transformen la sortida de les capes convolucionals anteriors i ho transformen xarxa completament connectada.
 
