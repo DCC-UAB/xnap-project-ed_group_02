@@ -1,8 +1,8 @@
-keras
 librosa
 matplotlib
 numpy
-pytorch-lightning
-tensorflow
 torch
 torchvision
+json
+scikit-learn
+pandas
