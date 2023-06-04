@@ -121,7 +121,7 @@ L'objectiu principal d'utilitzar l'algorisme StepLR és ajustar la taxa d'aprene
 S’ha intentat implementar un nou model per la classificació de música segons el gènere on s'utilitzen les imatges MFCC, coeficients per la representació de la senyal d’audio.
 MFCC ens permet obtenir informació sobre audios obviant el soroll.
 
-S’ha creat un una llibreta per processar les dades de nou, anomenada <<<data_process_cnn>>>, on es processa els audios ja existents, guardant en un diccionari dues llistes, una corresponent al gènere i l’altre una array amb els valors de la imatge MFCC.
+S’ha creat un una llibreta per processar les dades de nou, anomenada *data_process_cnn.ipynb*, on es processa els audios ja existents, guardant en un diccionari dues llistes, una corresponent al gènere i l’altre una array amb els valors de la imatge MFCC.
 
 Per processar els audios s’ha dividit en 5 segments, per tant els audios de 30 segons estaven representats en 5 imatges, augmentant lligerament la mida de les dades.
 El diccionari es guarda en un fitxer JSON pel train, test i validation respectivament.
@@ -132,6 +132,7 @@ El model CNN que segueix la següent estructura:
 3 Capes de normalització BatchNorm2d, que tenen com objectiu facilitar l’entrenament i una millor convergencia de la red.
 A més s’ha utilitzat la funció d’activació ReLU per evitar linealitat després de cada capa de convolució i finalment unes capes Flatten, Linear, ReLU i DropOut que transformen la sortida de les capes convolucionals anteriors i ho transformen xarxa completament connectada.
 
+Aquest model s'executa desde la llibreta *model_cnn.ipynb*, pero actualment no funciona degut en un error al prepara les dades.
 
 ## Entrenament
 
