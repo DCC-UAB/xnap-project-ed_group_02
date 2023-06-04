@@ -116,7 +116,7 @@ L'objectiu principal d'utilitzar l'algorisme StepLR és ajustar la taxa d'aprene
 
 **Lstm_pytorch_optim serà el nostre millor model**<br>
 
-**Model CNN**
+***Model CNN***
 
 S’ha intentat implementar un nou model per la classificació de música segons el gènere on s'utilitzen les imatges MFCC, coeficients per la representació de la senyal d’audio.
 MFCC ens permet obtenir informació sobre audios obviant el soroll.
@@ -160,6 +160,13 @@ Per avaluar el model entrenat en el conjunt de proves, executeu el codi com es d
 ## Resultats
 
 Els resultats del model són la precisió (accuracy) obtinguda en el conjunt de proves. Aquesta mètrica indica la capacitat del model per classificar correctament les mostres d'àudio en els gèneres corresponents. Els resultats també es poden visualitzar en forma de gràfics de pèrdua (loss) i precisió (accuracy) durant l'entrenament.</br>
+
+| Encabezado 1 | Encabezado 2 | Encabezado 3 | Encabezado 4 | Encabezado 5 |
+|--------------|--------------|--------------|--------------|--------------|
+| Celda 1      | Celda 2      | Celda 3      | Celda 4      | Celda 5      |
+| Celda 6      | Celda 7      | Celda 8      | Celda 9      | Celda 10     |
+| Celda 11     | Celda 12     | Celda 13     | Celda 14     | Celda 15     |
+
 
 ## Ús
 
