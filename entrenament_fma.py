@@ -9,7 +9,12 @@ import seaborn as sns
 
 def entrenar(model,conjunt_entrenament,optimizer,scheduler=None,loss_function=nn.NLLLoss(),num_epochs=400,batch_size=42,grafiquejar=True):
     train_X,train_Y,dev_X,dev_Y,test_X,test_Y=conjunt_entrenament
-    
+    print("Training X shape: " + str(train_X.shape))
+    print("Training Y shape: " + str(train_Y.shape))
+    print("Validation X shape: " + str(dev_X.shape))
+    print("Validation Y shape: " + str(dev_Y.shape))
+    print("Test X shape: " + str(test_X.shape))
+    print("Test Y shape: " + str(test_Y.shape))
     train_on_gpu = torch.cuda.is_available()
     if train_on_gpu:
         print("\nTraining on GPU")
@@ -186,6 +191,7 @@ def entrenar(model,conjunt_entrenament,optimizer,scheduler=None,loss_function=nn
     if grafiquejar:
     # visualization loss
         plt.plot(epoch_train_list, train_loss_list)
+        plt.plot(epoch_train_list, val_loss_list, color="red")
         plt.xlabel("# of epochs")
         plt.ylabel("Loss")
         plt.title("LSTM: Loss vs # epochs")
@@ -193,7 +199,8 @@ def entrenar(model,conjunt_entrenament,optimizer,scheduler=None,loss_function=nn
         plt.show()
         plt.clf()
         # visualization accuracy
-        plt.plot(epoch_train_list, train_accuracy_list, color="red")
+        plt.plot(epoch_train_list, train_accuracy_list)
+        plt.plot(epoch_train_list, val_accuracy_list, color="red")
         plt.xlabel("# of epochs")
         plt.ylabel("Accuracy")
         plt.title("LSTM: Accuracy vs # epochs")
