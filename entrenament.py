@@ -184,7 +184,7 @@ def entrenar(model,conjunt_entrenament,optimizer,scheduler=None,loss_function=nn
     if grafiquejar:
     # visualization loss
         plt.plot(epoch_train_list, train_loss_list)
-        plt.plot(epoch_train_list, val_loss_list, color="red")
+        plt.plot(epoch_list, val_loss_list, color="red")
         plt.xlabel("# of epochs")
         plt.ylabel("Loss")
         plt.title("LSTM: Loss vs # epochs")
@@ -193,7 +193,7 @@ def entrenar(model,conjunt_entrenament,optimizer,scheduler=None,loss_function=nn
         plt.clf()
         # visualization accuracy
         plt.plot(epoch_train_list, train_accuracy_list)
-        plt.plot(epoch_train_list, val_accuracy_list, color="red")
+        plt.plot(epoch_list, val_accuracy_list, color="red")
         plt.xlabel("# of epochs")
         plt.ylabel("Accuracy")
         plt.title("LSTM: Accuracy vs # epochs")
