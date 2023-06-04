@@ -20,7 +20,6 @@ Aquest repositori conté una implementació en PyTorch d'un model LSTM de 2 cape
 - [Resultats](#resultats)</br>
 - [Altre Dataset](#altre-dataset)</br>
 - [Ús](#ús)</br>
-- [Llicència](#llicència)</br>
 
 ## Introducció
 
@@ -50,7 +49,7 @@ pip install torch numpy librosa matplotlib seaborn pandas scikit-learn
 
 ## Conjunt de dades
 
-El conjunt de dades utilitzat per a l'entrenament i avaluació consisteix en mostres d'àudio de diferents gèneres. Els fitxers d'àudio es pre-processen per extreure les característiques desitjades utilitzant la classe GenreFeatureData, que fa servir la llibreria librosa. Les dades pre-processades es guarden en format NumPy per a una càrrega eficient durant l'entrenament i l'avaluació.</br>
+El conjunt de dades utilitzat per a l'entrenament i avaluació consisteix en mostres d'àudio de diferents gèneres. Els fitxers d'àudio es pre-processen per extreure les característiques desitjades utilitzant la classe *GenreFeatureData*, que fa servir la llibreria librosa. Les dades pre-processades es guarden en format NumPy per a una càrrega eficient durant l'entrenament i l'avaluació.</br>
 El conjunt de dades es divideix en tres subconjunts: entrenament, validació i prova. El conjunt d'entrenament s'utilitza per entrenar el model, el conjunt de validació es fa servir per a monitorar el rendiment del model durant l'entrenament i el conjunt de prova es fa servir per avaluar el model final.</br>
 
 ### Gtzan
@@ -71,7 +70,7 @@ Els arxius es troben en format *id.mp3* dintre de 155 carpetes diferents.
 
 ## Dataloader
 
-GenreFeatureData és la classe que utilitzem en tots els casos per carregar les dades, és el nostre dataloader. Ens extreu característiques d'àudio i ens carrega el conjunt d'entrenament (traint,test). Quant utilitzem aquesta classe pot carregar les dades de dos formes.</br>
+*GenreFeatureData* és la classe que utilitzem en tots els casos per carregar les dades, és el nostre dataloader. Ens extreu característiques d'àudio i ens carrega el conjunt d'entrenament (train,test). Quant utilitzem aquesta classe pot carregar les dades de dos formes.</br>
 La primera és quan no troba els arxius preprocessats. Llavors utilitza la funció d'extreure característiques per cada un dels conjunts (test train validation) i hi genera sis objectes numpy, per les dades i el target de cada conjunt. Un cop fa això guarda aquests arrays en un arxiu .npy. Aquests són precisament els arxius preprocessats.</br>
 La segona es quant els troba perquè ja s'ha executat abans. Quant es així el programa es molt mes ràpid ja que nomes ha de llegir els arxius i ja es pot posar a entrenar.</br>
 Depenen de quin dels tres arxius: _GenreFeatureData.py_, _GenreFeatureData_m.py_ o _GenreFeatureDataFMA.py_ importem, obtindrem un objecte amb el mateix nombre i crides de funcions, però amb funcionaments interns diferent.</br>
@@ -132,7 +131,7 @@ En resum, aquest model presenta canvis significatius en l'arquitectura de la LST
 
 ***Optimització de paràmetres, canvi en la funció loss i Dropout: lstm_pytorch_optim***</br>
 
-En aquest model a diferència del anterior, trobem una capa adicional de dropout. També hem passat d'utilitzar el GenreFeatureData al GenreFeatureData_m (aquest GenreFeature ens retorna les característiques d'audio, però aquestes a diferencia del anterior GenreFeature provenen d'espectogrames de mel que han sigut pasats a una representació logarítimica per posteriorment extreure les seves característiques).</br>
+En aquest model a diferència del anterior, trobem una capa adicional de dropout. També hem passat d'utilitzar el *GenreFeatureData* al *GenreFeatureData_m* (aquest GenreFeature ens retorna les característiques d'audio, però aquestes a diferencia del anterior GenreFeature provenen d'espectogrames de mel que han sigut pasats a una representació logarítimica per posteriorment extreure les seves característiques).</br>
 
 Finalment, s'ha implementat un learning schedule i canviat la funció que utilitzavem per calcular la loss. A continuació els tres schedules utilitzats.</br>
 
@@ -148,7 +147,7 @@ Finalment el schedule utilitzat: <br>
 
 L'objectiu principal d'utilitzar l'algorisme StepLR és ajustar la taxa d'aprenentatge per millorar el rendiment del model al llarg de l'entrenament. Reduir la taxa d'aprenentatge en moments específics pot ajudar a estabilitzar i refinar el model, especialment en situacions en què el model pot sobreajustar-se o quan s'acosta a un òptim local.<br>
 
-**Lstm_pytorch_optim serà el nostre millor model**<br>
+
 
 ***Altres: Model CNN***
 
@@ -175,7 +174,7 @@ Per entrenar el model, seguiu els següents passos:</br>
 
 1. Assegureu-vos d'haver instal·lat totes les dependències esmentades a la secció [Dependències](#dependències).</br>
 2. Baixeu el conjunt de dades o prepareu el vostre propi conjunt de dades amb mostres d'àudio i les seves etiquetes de gènere corresponents.</br>
-3. Pre-processeu les mostres d'àudio i extreu les característiques d'àudio utilitzant la classe GenreFeatureData. Desa les dades pre-processades en format NumPy.</br>
+3. Pre-processeu les mostres d'àudio i extreu les característiques d'àudio utilitzant la classe *GenreFeatureData*. Desa les dades pre-processades en format NumPy.</br>
 4. Modifiqueu la funció `main()` en el codi per proporcionar la ruta de les dades pre-processades i ajustar altres hiperparàmetres si cal.</br>
 5. Executeu el codi utilitzant la següent comanda:</br>
 
@@ -198,21 +197,25 @@ Per avaluar el model entrenat en el conjunt de proves, executeu el codi com es d
 
 Els resultats del model són la precisió (accuracy) obtinguda en el conjunt de proves. Aquesta mètrica indica la capacitat del model per classificar correctament les mostres d'àudio en els gèneres corresponents. Els resultats també es poden visualitzar en forma de gràfics de pèrdua (loss) i precisió (accuracy) durant l'entrenament.</br>
 
-| Encabezado 1 | Encabezado 2 | Encabezado 3 | Encabezado 4 | Encabezado 5 |
-|--------------|--------------|--------------|--------------|--------------|
-| Celda 1      | Celda 2      | Celda 3      | Celda 4      | Celda 5      |
-| Celda 6      | Celda 7      | Celda 8      | Celda 9      | Celda 10     |
-| Celda 11     | Celda 12     | Celda 13     | Celda 14     | Celda 15     |
+| Mètrica             |   StepLR     |   Cosine     |   Plateau    |
+|---------------------|--------------|--------------|--------------|
+| Accuracy train      | 79,77%       | 96.63%       | 78.70%       | 
+| Loss train          | 0.5256       | 0.3907       | 0.5924       | 
+| Accuracy validation | 73.44%       | 68.75%       | 71.88%       | 
+| Loss validation     | 1.044        | 1.8855       | 0.8942       | 
+| Accuracy test       | 58,33%       | 68.33%       | 60.00%       | 
+| Loss test           | 1.055        | 2.11         | 1.2041       | 
 
 
 ## Altre Dataset
 
-Volíem veure que passava amb els models si els entrenàvem amb un dataset diferent, per fer-ho vam utilitzar el data set fma descrit anteriorment, en concret la versió small. L'objectiu original per tant era simplement canviar el dataloader, però finalment la funció per entrenar va haver de ser canviada, no per motius d'execució sinó per la impressió de la matriu de confusió.</br>
+Volíem veure que passava amb els models si els entrenàvem amb un dataset diferent, per fer-ho vam utilitzar el dataset fma descrit anteriorment, en concret la versió small. L'objectiu original per tant era simplement canviar el dataloader, però finalment la funció per entrenar va haver de ser canviada, no per motius d'execució sinó per la impressió de la matriu de confusió.</br>
 Com ja s'ha comentat abans aquest dataset es troba estructurat deifernement:</br>
 -No ho tenim dividit en test i train</br>
 -No tenim la classe en el nom de l'arxiu</br>
-Per solucionar el segon problema haurem d'utilitzar un arxiu tracks.csv que es troba també a la pàgina web. En la capeta fma_metadada trobem aquest arxiu. Per poder fer les execucions necessitem tenir en la carpeta fma l'arxiu tracks.csv i la carpeta fma_small que conté les 155 carpetes, el checksum i un readme.</br>
-Una vegada hem descarregat o pujat aquests arxius de la pàgina web necessitarem fer diversos canvis, això es deu a que hi ha tres arxius de música que estan buits i per tant han de ser eliminats per evitar errors. Per treure'ls ho farem manualment ja que només ho hem de fer un cop. En la terminal situant-nos a la carpeta fma_small executem:</br>
+
+Per solucionar el segon problema haurem d'utilitzar un arxiu *tracks.csv* que es troba també a la pàgina web. En la capeta fma_metadada trobem aquest arxiu. Per poder fer les execucions necessitem tenir en la carpeta fma l'arxiu *tracks.csv* i la carpeta *fma_small* que conté les 155 carpetes, el checksum i un readme.</br>
+Una vegada hem descarregat o pujat aquests arxius de la pàgina web necessitarem fer diversos canvis, això es deu a que hi ha tres arxius de música que estan buits i per tant han de ser eliminats per evitar errors. Per treure'ls ho farem manualment ja que només ho hem de fer un cop. En la terminal situant-nos a la carpeta *fma_small* executem:</br>
 ```bash
 rm 099/099134.mp3
 rm 108/108925.mp3
@@ -223,19 +226,18 @@ I tenim aquests tres arxius eliminats. Però per poder executar la resta del cod
 
 ### Preprocesament
 
-Hem fet un codi, read_fma.py, que s'encarrega de generar 4 arxius que ens tornen aquest data set en algo amigable pel nostre dataloader. Aquest codi llegeix els arxius tracks.csv i els arxius checksum. Amb aquests genera un tracks_small.csv que només conte dues columnes, una per id i una altre per el gènere de l'àudio. I genera tres arxius que contenen un llistat de les cançons que s'utilitzaran per train, validation i test.</br>
-Amb aquests quatre arxius simplement hem de fer petits canvis al GenreFeatureData i tindrem l'arxiu GenreFeatureDataFMA.py que actua a nivell extern exactament igual que amb l'altre data set. Per tant no hem de canviar res dels arxius on definim el model per executar-ho. Simplement fem la importació del dataloader d'aquest nou arxiu.</br>
+Hem fet un codi, _read_fma.py_, que s'encarrega de generar 4 arxius que ens tornen aquest dataset en algo amigable pel nostre dataloader. Aquest codi llegeix els arxius tracks.csv i els arxius checksum. Amb aquests genera un tracks_small.csv que només conte dues columnes, una per id i una altre per el gènere de l'àudio. I genera tres arxius que contenen un llistat de les cançons que s'utilitzaran per train, validation i test.</br>
+Amb aquests quatre arxius simplement hem de fer canvis al *GenreFeatureData* i tindrem l'arxiu *GenreFeatureDataFMA.py* que actua a nivell extern exactament igual que amb l'altre dataset. Per tant no hem de canviar res dels arxius on definim el model per executar-ho. Simplement fem la importació del dataloader d'aquest nou arxiu.</br>
 Com ja s'ha comentat al principi hem de canviar també l'entrenament simplement perquè el nombre de classes i quines són canvia. Ho fem només perquè la funció d'entrenament ens imprimeix una matriu de confusió. A part d'aquest detall no canvia res.</br>
 
 ### Problema
 
 Si fem els passos de descarregar i ordenar els arxius, eliminar els 3 arxius del dataset i checksum, i finalment executem _read_fma.py_ ens trobem amb un problema. Dintre del programa per algun motiu quan decidim quins ids són del train (ids que hem extret del chacksum) i tornem a buscar aquests ids de la mateixa forma no ens els troba tots.</br>
 És a dir, emplenem perfectament el llistat d'arxius test (800) i validation (800) però pel train només emplena 1890 dels 6400 que hauria d'emplenar. Per tant ens queda un training més petit del que hi hauria. Desconeixem perquè fa això tot i que sabem perfectament en quina part del codi passa això (línia 63 bàsicament). Tampoc tenim cap teoria perquè per memòria no te cap problema.</br>
-Si seguim endavant tenim un problema i és que tenim el traint des-balancejat. Si executem el següent codi un cop preprocessem les dades amb el GenreFeaturesData:</br>
+Si seguim endavant tenim un problema i és que tenim el train des-balancejat. Si executem el següent codi un cop preprocessem les dades amb el *GenreFeaturesData*:</br>
 ```python
 import numpy as np
 import torch
-import matplotlib.pyplot as plt
 train_y=np.load("./fma/data_train_target.npy")
 train_y=torch.from_numpy(train_y).type(torch.Tensor)
 print(np.histogram(torch.max(train_y, 1)[1].numpy(),bins=7))
@@ -245,8 +247,8 @@ Ens informa que efectivament les classes estan desequilibrades
 
 ### Possibles Solucions
 
-A partir d'aquí es pot entrenar igualment o intentar equilibrar. Si fem el primer els resultats es poden veure a la capeta d'imatges/fma_png.</br>
-Per intentar equilibrar podem concatenar training i validation, utilitzar test per tant la funció de validation com per la de test. Això no ens comporta molts problemes, test i validation en el nostre entrenament són intercanviables, i aconseguim que hi hagui una mica més de dades equilibrades. Els resultats d'aquest mètode es poden observar a imatges/fma_png_ajuntant</br>
+A partir d'aquí es pot entrenar igualment o intentar equilibrar. Si fem el primer els resultats es poden veure a la capeta de figures amb els noms fma_sense_juntar.</br>
+Per intentar equilibrar podem concatenar training i validation, utilitzar test per tant la funció de validation com per la de test. Això no ens comporta molts problemes, test i validation en el nostre entrenament són intercanviables, i aconseguim que hi hagui una mica més de dades equilibrades. Els resultats d'aquest mètode es poden observar a figures amb els noms fma_junt</br>
 
 ### Resultats 
 
