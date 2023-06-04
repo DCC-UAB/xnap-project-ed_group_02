@@ -93,3 +93,4 @@ ENV/
 #ignore the dataset
 gtzan/
 fma/
+*.json
