@@ -61,7 +61,7 @@ El conjunt de dades es divideix en tres subconjunts: entrenament, validació i p
 
 ## Models
 
-**_Starting Point: lstm.pytorch.original_**</br>
+***Starting Point: lstm_pytorch_original***</br>
 
 Aquest és un codi en Python que implementa un model LSTM (Long Short-Term Memory) de 2 capes per a la classificació de gènere de música utilitzant PyTorch. L'arquitectura del model consisteix en una pila de capes LSTM seguida d'una capa de sortida.</br>
 
@@ -77,7 +77,7 @@ Aquí hi ha una explicació de les parts importants del codi:</br>
 
 En resum, aquest codi implementa i entrena un model LSTM per a la classificació de gènere de música utilitzant dades d'àudio pre-processades. Utilitza PyTorch com a framework per a la construcció i l'entrenament del model.</br>
 
-**_GPU/Visualització/Entrenament: lstm.pytorch.basic.gpu_**</br>
+***GPU/Visualització/Entrenament: lstm_pytorch_basic_gpu***</br>
 
 Aquest model és una implementació en PyTorch d'un LSTM de 2 capes per a la classificació de gènere musical utilitzant característiques espectrals, cromàtiques i MFCC com a dades d'entrada. A continuació, es detallen les diferències d'aquest model respecte al model anterior:</br>
 
@@ -100,13 +100,13 @@ Aquest model és una implementació en PyTorch d'un LSTM de 2 capes per a la cla
 En resum, aquest model presenta canvis significatius en l'arquitectura de la LSTM, la funció de pèrdua, l'optimitzador i altres aspectes del codi respecte al model anterior. També inclou visualització de resultats.</br>
 
 
-**_Optimització de paràmetres, canvi en la funció loss i Dropout: lstm.pytorch.optim_**</br>
+***Optimització de paràmetres, canvi en la funció loss i Dropout: lstm_pytorch_optim***</br>
 
 En aquest model a diferència del anterior, trobem una capa adicional de dropout. També hem passat d'utilitzar el GenreFeatureData al GenreFeatureData_m (aquest GenreFeature ens retorna les característiques d'audio, però aquestes a diferencia del anterior GenreFeature provenen d'espectogrames de mel que han sigut pasats a una representació logarítimica per posteriorment extreure les seves característiques).</br>
 
 Finalment, s'ha implementat un learning schedule i canviat la funció que utilitzavem per calcular la loss. A continuació els tres schedules utilitzats.</br>
 
-Lstm.pytorch.optim.ReduceLROnPlateau: en aquest model s'ha utilitzat el schedule ReduceLROnPlateau que consisteix en monotoritzar el accuracy durant cada època d'entrenament. Si l'accuracy no millora durant un determinat nombre d'èpoques ( 10) consecutives, la taxa d'aprenentatge es redueix en un factor predeterminat
+***Lstm_pytorch_optim_ReduceLROnPlateau:*** en aquest model s'ha utilitzat el schedule ReduceLROnPlateau que consisteix en monotoritzar el accuracy durant cada època d'entrenament. Si l'accuracy no millora durant un determinat nombre d'èpoques ( 10) consecutives, la taxa d'aprenentatge es redueix en un factor predeterminat (lr*0.1). La idea d'aquest schedule és ajustar el pas d'aprenentatge per aconseguir una millor convergència.</br>
 
 
 
