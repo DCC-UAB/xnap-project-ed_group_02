@@ -26,7 +26,7 @@ import pandas as pd
 from GenreFeatureDataFMA import (
     GenreFeatureData,
 )  # local python class with Audio feature extraction (librosa)
-from entrenament import entrenar
+from entrenament_fma import entrenar
 
 # class definition
 class LSTM(nn.Module):
@@ -39,6 +39,7 @@ class LSTM(nn.Module):
 
         # setup LSTM layer
         self.lstm = nn.LSTM(self.input_dim, self.hidden_dim, self.num_layers)
+        self.dropout = nn.Dropout(p=0)
 
         # setup output layer
         self.linear = nn.Linear(self.hidden_dim, output_dim)
@@ -48,6 +49,7 @@ class LSTM(nn.Module):
         # Note: lstm_out contains outputs for every step of the sequence we are looping over (for BPTT)
         # but we just need the output of the last step of the sequence, aka lstm_out[-1]
         lstm_out, (state,c) = self.lstm(input, (state,c))
+        x = self.dropout(self.dropout(lstm_out[-1]))
         logits = self.linear(lstm_out[-1])              # equivalent to return_sequences=False from Keras
         genre_scores = F.log_softmax(logits, dim=1)
         return genre_scores, state,c
@@ -99,22 +101,26 @@ def main():
     print("Test X shape: " + str(genre_features.test_X.shape))
     print("Test Y shape: " + str(genre_features.test_Y.shape))
 
-    batch_size = 35  # num of training examples per minibatch
-    num_epochs = 2
+    batch_size = 64  # num of training examples per minibatch
+    num_epochs = 1001
 
     # Define model
     print("Build LSTM RNN model ...")
     model = LSTM(
-        input_dim=33, hidden_dim=128, batch_size=batch_size, output_dim=8, num_layers=2
+        input_dim=33, hidden_dim=64, batch_size=batch_size, output_dim=8, num_layers=2
     )
     loss_function = nn.NLLLoss()  # expects ouputs from LogSoftmax
     
     optimizer = optim.Adam(model.parameters(), lr=0.001)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
+
+    # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training
+    stateful = False
 
     # To keep LSTM stateful between batches, you can set stateful = True, which is not suggested for training
     # stateful = False
     conjunt_entrenament=(train_X,train_Y,dev_X,dev_Y,test_X,test_Y)
-    entrenar(model,conjunt_entrenament,optimizer,num_epochs=num_epochs)
+    entrenar(model,conjunt_entrenament,optimizer,batch_size=64,num_epochs=1001,scheduler=scheduler)
     
 
 if __name__ == "__main__":
